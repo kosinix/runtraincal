@@ -1,0 +1,76 @@
+{% extends "body.html" %}
+
+{% block main %}
+    <div class="container main">
+    <div class="row justify-content-center register">
+        <div class="col">
+            <h1>Contact Us</h1>
+            {% raw %}
+            <form v-cloak v-on:submit.prevent="onSubmit" v-bind:action="formUrl" id="form-contact" class="form-contact" method="POST">
+                <div v-if="showMessage" v-bind:class="messageClass" role="alert">{{msg}}</div>
+                <div class="form-group">
+                    <label for="email">Your Email</label>
+                    <input v-model="email" v-bind:disabled="emailDisabled" type="email" class="form-control" id="email" placeholder="Email address">
+                </div>
+                <div class="form-group">
+                    <label for="message">Message</label>
+                    <textarea v-model="message" v-bind:disabled="messageDisabled" class="form-control" id="message" name="message" rows="3"></textarea>
+                </div>
+                <button v-bind:disabled="btnSubmitDisabled" type="submit" class="btn btn-lg btn-warning">{{btnSubmitValue}}</button>
+            </form>
+            {% endraw %}
+        </div>
+        
+    </div>
+</div><!-- /.container -->
+{% endblock %}
+{% block scripts %}
+<script src="{{baseUrl}}/js/jquery.min.js"></script>
+<script src="{{baseUrl}}/js/vue.min.js"></script>
+<script src="{{baseUrl}}/bootstrap4/js/bootstrap.bundle.min.js"></script>
+<script>
+    var form = new Vue({
+        el: '#form-contact',
+        data: {
+            formUrl: "{{baseUrl}}/contact-us.json",
+            btnSubmitValue: "Send",
+            email:"",
+            message:"",
+            emailDisabled: false,
+            messageDisabled: false,
+            btnSubmitDisabled: false,
+            messageClass: "alert",
+            msg:"",
+            showMessage: false
+        },
+        methods: {
+            onSubmit: function(e){
+                var me = this;
+                me.btnSubmitValue = "Sending..."
+                me.emailDisabled = true;
+                me.messageDisabled = true;
+                me.btnSubmitDisabled = true;
+                jQuery.post(me.formUrl, {
+                    email: me.email,
+                    message: me.message
+                }).then(function(data){
+                    me.showMessage = true;
+                    me.messageClass = "alert alert-success";
+                    me.msg = "Message sent!";
+                }).fail(function(jqXHR, textStatus, httpError){
+                    console.log(jqXHR)
+                    var error = jqXHR.responseJSON || ["Unknown error"];
+                    me.showMessage = true;
+                    me.messageClass = "alert alert-danger";
+                    me.msg = error.shift();
+                }).always(function(){
+                    me.btnSubmitValue = "Send"
+                    me.emailDisabled = false;
+                    me.messageDisabled = false;
+                    me.btnSubmitDisabled = false;
+                });
+            }
+        }
+    });
+</script>
+{% endblock %}

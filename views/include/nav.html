@@ -1,0 +1,38 @@
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+  <button class="navbar-toggler mr-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <a class="navbar-brand" href="{{baseUrl}}"><img src="{{baseUrl}}/images/logo.png" alt="Logo"> Run Training Calendar</a>
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="{{baseUrl}}">Home <span class="sr-only">(current)</span></a>
+      </li>
+      <!--<li class="nav-item">
+        <a class="nav-link" href="{{baseUrl}}/calendars.html">Sample Calendars</a>
+      </li>-->
+      
+    </ul>
+    {% if isAuth %}
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item"><a class="nav-link" href="/account/calendars.html">My Calendars</a></li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Profile</a>
+        <div class="dropdown-menu dropdown-profile">
+          <a class="dropdown-item" href="#">{{authUser.email}}</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="/account/logout.html">Logout</a>
+        </div>
+      </li>
+    </ul>
+    {% else %}
+    <ul class="navbar-nav ml-auto">
+      <li><a class="btn btn-warning" href="/account/register.html">Create Free Account</a></li>
+    </ul>
+    {% endif %}
+    
+  </div>
+  
+
+</nav>

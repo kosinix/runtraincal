@@ -1,0 +1,13 @@
+{% extends "document.html" %}
+
+{% block body %}
+<body class="{{bodyClass}}">
+	{% include "include/nav.html" %}
+	{% block main %}{% endblock %}
+	{% include "include/footer.html" %}
+	{% block scripts %}
+		<script src="{{baseUrl}}/js/jquery.min.js"></script>
+		<script src="{{baseUrl}}/bootstrap4/js/bootstrap.bundle.min.js"></script>
+	{% endblock %}
+</body>
+{% endblock %}

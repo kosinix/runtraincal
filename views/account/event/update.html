@@ -1,0 +1,39 @@
+{% extends "body.html" %}
+
+{% block main %}
+<div class="container main">
+    <div class="row justify-content-center">
+        <div class="col col-xs-12">
+            <h1> Training Day: {{event.date}}</h1>
+            <form action="{{baseUrl}}/account/event/update?uid={{uid}}" method="POST">
+                <input type="hidden" name="id" value="{{event.id}}">
+                <div class="form-row">
+                    <div class="form-group col-12 col-sm-6">
+                        <label for="title">Title</label>
+                        <input type="text" name="title" class="form-control" id="title" value="{{event.title}}">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-12 col-sm-6">
+                        <label for="description">Description (Separate by newline)</label>
+                        <textarea class="form-control" name="description" id="description" rows="3">{{event.description}}</textarea>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-12 col-sm-6">
+                        <label for="workoutType">Type</label>
+                        <select class="form-control custom-select" name="workoutType" id="workoutType">
+                            <option {% if event.workoutType === 'run' %}selected{%endif%} value="run">Run</option>
+                            <option {% if event.workoutType === 'rest' %}selected{%endif%} value="rest">Rest</option>
+                            <option {% if event.workoutType === 'weight' %}selected{%endif%} value="weight">Weight</option>
+                            <option {% if event.workoutType === 'race' %}selected{%endif%} value="race">Race!</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-warning">Update</button>
+            </form>
+            
+        </div>
+    </div>
+</div>
+{% endblock %}

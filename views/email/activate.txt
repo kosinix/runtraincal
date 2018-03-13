@@ -1,0 +1,6 @@
+Welcome!
+
+Please activate your account by verifying this email address.
+Go to this url: {{activation_link}}
+
+This is an automated email; if you received it in error, no action is required. For more information, please visit our Support Center at {{help_link}}.

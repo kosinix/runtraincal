@@ -1,0 +1,476 @@
+.clearfix:after {
+    content:"";
+    display: block;
+    height: 0;
+    visibility: hidden;
+    clear: both;
+    opacity:0;
+}
+body {
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+body > .container  {
+    padding-top: 80px;
+    padding-bottom: 100px;
+}
+body.home .container {
+    padding-top: 0;
+}
+
+/* Responsive */
+img {
+    max-width: 100%;
+}
+
+/* Body */
+body {
+    background: url("/images/men-trail.jpg") no-repeat center;
+    background-attachment: fixed;
+    background-size: cover;
+    min-height: 1000px;
+    position: relative;
+}
+
+/* Top */
+.row-top {
+    position: fixed;
+    padding: 0 15px;
+    top: 0;
+    left: 0;
+    z-index: 3;
+}
+.row-top > * {
+    margin: 10px 10px 0 0;
+}
+
+/* Home */
+.calendar-view {
+    position: relative;
+}
+.container-home {
+    padding-top: 80px;
+}
+
+.question {
+    position: relative;
+    left: 50%;
+    top: 0;
+    transform: translate(-50%, 0);
+    width: 400px;
+    overflow:  hidden;
+    text-align:  center;
+    background: rgba(255,255,255,0.8);
+    padding:  20px 10px;
+    font-size: 30px;
+    font-family: 'Anton', sans-serif;
+    margin-bottom: 30px;
+}
+
+::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+  color: #aaa
+}
+::-moz-placeholder { /* Firefox 19+ */
+  color: #aaa
+}
+:-ms-input-placeholder { /* IE 10+ */
+  color: #aaa;
+}
+:-moz-placeholder { /* Firefox 18- */
+  color: #aaa;
+}
+
+.q-cards{
+    position: relative;
+    width: 100%;
+    min-height: 400px;
+    overflow: hidden;
+    left: 0;
+}
+.q-card {
+    background: #fff;
+    position: absolute;
+    top: 0;
+    width: 400px;
+    transition: all 600ms ease-out;
+}
+
+/* Page 1 */
+.q-cards[data-page="1"] .q-card-1 {
+    left: 50%;
+    transform: translate(-50%, 0);
+}
+.q-cards[data-page="1"] .q-card-2 {
+    left: 100%;
+}
+.q-cards[data-page="1"] .q-card-3 {
+    left: 200%;
+}
+
+/* Page 2 */
+.q-cards[data-page="2"] .q-card-1 {
+    left: -100%;
+}
+.q-cards[data-page="2"] .q-card-2 {
+    left: 50%;
+    transform: translate(-50%, 0);
+}
+.q-cards[data-page="2"] .q-card-3 {
+    left: 100%;
+}
+
+/* Page 3 */
+.q-cards[data-page="3"] .q-card-1 {
+    left: -200%;
+}
+.q-cards[data-page="3"] .q-card-2 {
+    left: -100%;
+}
+.q-cards[data-page="3"] .q-card-3 {
+    left: 50%;
+    transform: translate(-50%, 0);
+}
+
+/* Page 4 */
+.q-cards[data-page="4"] .q-card-1 {
+    left: -200%;
+}
+.q-cards[data-page="4"] .q-card-2 {
+    left: -100%;
+}
+.q-cards[data-page="4"] .q-card-3 {
+    left: 50%;
+    transform: translate(-50%, 0);
+}
+
+.q-card input[type="text"] ,
+.q-card input[type="date"],
+.q-card select {
+    display:  block;
+    width:  100%;
+    padding:  10px;
+    font-size: 24px;
+    border: 0;
+    box-shadow: 0 0 3px 2px #ccc inset;
+    outline: 0;
+}
+.q-card select {
+    background: white;
+}
+.q-card button {
+    display:  block;
+    width:  100%;
+    border: 0;
+    background: orange;
+    padding: 20px;
+    color: #fefefe;
+    font-size: 28px;
+    border-right: 5px solid #d68a00;
+    border-bottom: 5px solid #d68a00;
+    border-left: 5px solid #ffba3b;
+    border-top: 5px solid #ffba3b;
+    cursor:  pointer;
+    outline: 0;
+}
+
+.q-card button:active {
+    border-color: orange;
+    padding-top: 21px;
+    padding-bottom: 19px;
+}
+
+.q-card button:disabled {
+    border-color: #aaa;
+    background-color: #aaa;
+    color: #777;
+    cursor: wait;
+}
+
+.q-card-3 button {
+    background: #029ae4;
+    border-right: 5px solid #078bcc;
+    border-bottom: 5px solid #078bcc;
+    border-left: 5px solid #03a1ef;
+    border-top: 5px solid #03a1ef;
+}
+.q-card-3 button:active {
+    border-color: #029ae4;
+}
+.anchor-options {
+    padding: 10px;
+    text-align: center;
+}
+.anchor-options label {
+    margin: 10px 20px;
+}
+
+button.undo {
+    position: absolute;
+    left: 10px;
+    top: 100px;
+    border-radius: 50px;
+    border:  0;
+    padding: 6px;
+    display:  block;
+    line-height: 1;
+    width:  40px;
+    height: 40px;
+    opacity: 42;
+    cursor:  pointer;
+    z-index: 2;
+    outline:  none;
+    background: #ddd;
+}
+button.undo:active {
+    padding-top: 7px;
+    padding-bottom: 5px;
+    margin-top: 1px;
+}
+button.undo:disabled {
+    display: none;
+}
+
+.row-calendar {
+    background: rgba(255,255,255, 0.9);
+    margin-bottom: 15px;
+    position:  relative;
+    overflow:  hidden;
+}
+
+.modal-login {
+    max-width: 350px;
+}
+/* Shaker */
+@-webkit-keyframes shake {
+    0% { -webkit-transform: translate(2px, 1px) rotate(0deg); } 
+    10% { -webkit-transform: translate(-1px, -2px) rotate(-2deg); }
+    20% { -webkit-transform: translate(-3px, 0px) rotate(2deg); }
+    30% { -webkit-transform: translate(0px, 2px) rotate(0deg); }
+    40% { -webkit-transform: translate(1px, -1px) rotate(2deg); }
+    50% { -webkit-transform: translate(-1px, 2px) rotate(-2deg); }
+    60% { -webkit-transform: translate(-3px, 1px) rotate(0deg); }
+    70% { -webkit-transform: translate(2px, 1px) rotate(-2deg); }
+    80% { -webkit-transform: translate(-1px, -1px) rotate(2deg); }
+    90% { -webkit-transform: translate(2px, 2px) rotate(0deg); }
+    100% { -webkit-transform: translate(1px, -2px) rotate(-2deg); }
+}
+body .shake {
+    -webkit-animation-name: shake;
+    -webkit-animation-duration: 0.5s;
+    -webkit-transform-origin:50% 50%;
+    -webkit-animation-iteration-count: infinite;
+}
+.shake {
+    display:inline-block
+}
+
+/* Vue */
+[v-cloak]{
+    display: none;
+}
+[v-cloak]>div{
+    position: relative;
+    display: block;
+    min-height: 100px;
+}
+[v-cloak]::before{
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    content:"";
+    display: block;
+    background: #fff url('/images/ajax-loader.gif') no-repeat center;
+    z-index: 1;
+}
+
+/* Table */
+.calendar {
+    margin: 0;
+}
+.calendar thead tr th {
+    background: #FFC107;
+    text-align: center;
+    padding: 10px 0;
+    border: 1px solid #ddd;
+}
+
+td {
+    border: 1px solid #ccc;
+    width: 14%;
+}
+td p {
+    padding: 0;
+    margin: 0;
+    white-space: nowrap;
+}
+
+td.prefix,
+td.suffix {
+    opacity: 0.5;
+}
+td.prefix,
+td.suffix,
+td.prefix a,
+td.suffix a {
+    color: #bbb;
+}
+.table > tbody > tr> td {
+    padding: 2px;
+}
+.date {
+    min-height: 100px;
+    padding: 10px;
+    cursor:  pointer;
+}
+.now {
+    box-shadow: 0 0 2px 2px #FFC107 inset;
+}
+.date .day {
+    padding: 5px 0;
+}
+.date-is {
+    margin-right: 20px;
+}
+.custom-control-input:checked ~ .custom-control-indicator {
+    background-color: #FFC107;
+}
+.date .event {
+    background: #029AE4;
+    color: #fff;
+    border-radius: 2px;
+    padding: 5px 8px;
+    margin-top: 2px;
+    line-height: 1.2;
+}
+.prefix .date .event,
+.suffix .date .event {
+    background: #DDDDDD
+}
+
+.date .event[data-type="rest"]{
+    background: #818181;
+}
+.date .event[data-type="weight"]{
+    background: #33B679;
+}
+
+/* Action bar */
+.action-bar {
+    display: flex;
+    flex-wrap:  wrap;
+}
+.action-bar > div {
+    width: 33%;
+    flex-grow: 1;
+}
+.action-nav {
+    text-align: left;
+}
+.action-year {
+    text-align: center;
+}
+.action-year h1 {
+    font-size: 22px;
+    line-height: 1;
+    margin: 0;
+    font-family:  'Anton', sans-serif;
+    padding: 10px;
+}
+.action-page {
+    text-align: right;
+}
+.action-bar .btn {
+    box-shadow: none;
+    line-height: 1;
+}
+
+/* Save */
+.save-bar {
+    padding: 10px;
+    border-top: 1px solid #ccc;
+}
+.row-calendar h2 {
+    text-align: center;
+    padding: 15px;
+    /* font-family: 'Anton'; */
+    margin: 0;
+}
+
+.table-port {
+    position: relative;
+    overflow: hidden;
+}
+.day-view {
+    position: absolute;
+    left: 0;
+    top: -100%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255,255,255,1);
+    transition: all 200ms ease-out;
+}
+.day-view[data-show="true"]{
+    top: 0;
+}
+.event {
+    padding: 20px 0 0 40px;
+}
+
+.event h6 {
+    text-transform:capitalize;
+}
+.event li {
+    padding: 0;
+    margin-bottom: 15px
+}
+.event > li {
+    margin-bottom: 30px;
+}
+.workout-buttons {
+    padding: 20px;
+}
+
+@media (max-width:500px){
+    body {
+        font-size: 13px;
+    }
+    .question,
+    .q-card {
+        width: 100%;
+    }
+    .question {
+        top: 60px
+    }
+    .q-card {
+        top: 60px
+    }
+    button.undo {
+        top: 0;
+        left: auto;
+        right:  0;
+    }
+
+    .action-bar > div {
+        width: 100%;
+    }
+    .action-bar .action-page {
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: auto;
+    }
+    .calendar thead tr th {
+        padding: 0;
+        width: 14%;
+    }
+    .calendar .date {
+        padding: 2px;
+    }
+    .calendar thead tr td {
+        width: 14%;
+    }
+    .date .event {
+        padding: 1px;
+    }
+}

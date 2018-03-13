@@ -1,0 +1,73 @@
+{% extends "body.html" %}
+
+{% block main %}
+<div class="container main">
+    <div class="row action-bar">
+        <div class="col col-xs-4 action-today">
+            <div class="btn-group" role="group" aria-label="pagination">
+                <a class="btn btn-light" href="{{baseUrl}}/account/day/read.html?uid={{uid}}&year={{ dayView.prevDay.format('YYYY') }}&month={{ dayView.prevDay.format('MM') }}&day={{ dayView.prevDay.format('DD') }}" aria-label="Left Align">
+                    <svg fill="#000000" width="26" height="26" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                    </svg>
+                </a>
+                <a href="{{baseUrl}}/account/day/read.html?uid={{uid}}&year={{now.format('YYYY')}}&month={{now.format('MM')}}&day={{now.format('DD')}}" class="btn btn-light" aria-label="Today">
+                    <span>Today</span>
+                </a>
+                <a class="btn btn-light" href="{{baseUrl}}/account/day/read.html?uid={{uid}}&year={{ dayView.nextDay.format('YYYY') }}&month={{ dayView.nextDay.format('MM') }}&day={{ dayView.nextDay.format('DD') }}">
+                    <svg fill="#000000" width="26" height="26" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+        <div class="col col-xs-4 action-year">
+            <h1><a href="{{baseUrl}}/account/calendar/read.html?uid={{uid}}&year={{dayView.year}}&month={{dayView.month}}">{{dayView.moment.format('MMMM')}} {{dayView.moment.format('DD')}}</a></h1>
+        </div>
+        <div class="col col-xs-4 action-page">
+            <a class="btn btn-light" href="{{baseUrl}}/account/event/create.html?uid={{uid}}&year={{dayView.year}}&month={{dayView.month}}&day={{dayView.day}}">
+                <svg width="26" height="26" viewBox="0 0 24 24">
+                    <path fill="#000000" d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z" />
+                </svg>
+            </a>
+            
+            
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-10">
+            <br>
+            <br>
+            <br>
+            {% if gold.length %}
+                <ul>
+                {% for info in gold %}
+                    {% if info.title %}
+                        <li>
+                            <h6>{{info.title}}</h6>
+                            <pre>{{info.description }}</pre>
+                            <p>
+                                <a class="btn btn-light" title="Edit" href="{{baseUrl}}/account/event/update.html?uid={{uid}}&eventId={{info.id}}">
+                                    <svg width="26" height="26" viewBox="0 0 24 24">
+                                        <path fill="#000000" d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z" />
+                                    </svg>
+                                </a>
+                                <a class="btn btn-light" href="{{baseUrl}}/account/event/delete?uid={{uid}}&event={{info.id}}">
+                                    <svg width="26" height="26" viewBox="0 0 24 24">
+                                        <path fill="#000000" d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z" />
+                                    </svg>
+                                </a>
+                            </p>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+                </ul>
+            {% else %}
+                <h6>No training info this day.</h6>
+            {% endif %}
+            
+        </div>
+    </div>
+</div>
+{% endblock %}

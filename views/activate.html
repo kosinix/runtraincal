@@ -1,0 +1,37 @@
+{% extends "body.html" %}
+
+{% block main %}
+    <div class="container main">
+    <div class="row justify-content-center register">
+        <div class="col-4 info">
+            <h1>Welcome to Run Training Calendar</h1>
+            <p>Once you are in, you can start creating your training calendars. We dont share your email with anyone else.</p>
+        </div>
+        <div class="col-4 form">
+            <form action="/account/create" method="POST">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Email address</label>
+                    <input type="email" name="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
+                    <small id="emailHelp" class="form-text text-muted">We need this in case you forgot your password.</small>
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword1">Password</label>
+                    <input type="password" name="password" minlength="8" class="form-control" id="exampleInputPassword1" placeholder="Password">
+                </div>
+                <div class="form-check">
+                    <label class="form-check-label">
+                    <input type="checkbox" name="terms" class="form-check-input" value="yes">
+                    I agree to the terms.
+                    </label>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-warning">Create Account</button>
+                </div>
+                
+                <p class="text-center">Already have an account? <a href="/account/login.html">Login here</a></p>
+
+            </form>
+        </div>
+    </div>
+</div><!-- /.container -->
+{% endblock %}

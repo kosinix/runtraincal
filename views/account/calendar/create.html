@@ -1,0 +1,107 @@
+{% extends "body.html" %}
+
+{% block main %}
+<div class="container main">
+    <div class="row justify-content-center">
+        <div class="col col-xs-12">
+            <h1>Create Training Calendar</h1>
+            {% raw %}
+            <form v-cloak v-on:submit.prevent="onSubmit" v-bind:action="formUrl" id="form-calendar-create" class="form-calendar-create" method="POST">
+                <div v-if="alertShow" v-bind:class="alertClass" role="alert">{{alertMessage}}</div>
+                <div class="form-row">
+                    <div class="form-group col-12 col-sm-6">
+                        <label for="title">Training Calendar Name</label>
+                        <input v-model="title" v-bind:disabled="fieldDisabled" type="text" name="title" class="form-control" id="title">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-12">
+                        <label class="date-is" for="dateAnchorPointEnd">The date is the:</label>
+                        <label class="custom-control custom-radio">
+                            <input v-model="dateAnchorPoint" v-bind:disabled="fieldDisabled" id="dateAnchorPointEnd" name="dateAnchorPoint" value="end" type="radio" class="custom-control-input">
+                            <span class="custom-control-indicator"></span>
+                            <span class="custom-control-description">race/event date</span>
+                        </label> 
+                        <label class="custom-control custom-radio">
+                            <input v-model="dateAnchorPoint" v-bind:disabled="fieldDisabled" id="dateAnchorPointStart" name="dateAnchorPoint" value="start" type="radio" class="custom-control-input">
+                            <span class="custom-control-indicator"></span>
+                            <span class="custom-control-description">start of my training</span>
+                        </label>
+                    </div>
+                    <div class="form-group col-6 col-sm-2">
+                        <select v-model="month" v-bind:disabled="fieldDisabled" class="custom-select form-control" name="month" id="month">
+                            <option v-for="(monthName, monthIndex) in monthNames" v-bind:value="monthIndex+1">{{monthName}}</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-3 col-sm-1">
+                        <input v-model="day" v-bind:disabled="fieldDisabled" class="form-control" name="day" type="number" min="1" max="31" placeholder="Day" value="">
+                    </div>
+                    <div class="form-group col-3 col-sm-2">
+                        <input v-model="year" v-bind:disabled="fieldDisabled" class="form-control" name="year" type="number" min="1970" max="2999" placeholder="Year" value="">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-12 col-sm-6">
+                        <label for="planId">Training Plan Presets</label>
+                        <select v-bind:disabled="fieldDisabled" class="form-control custom-select" name="planId" id="planId">
+                            <option value="0">None</option>
+                            <option v-for="(plan, index) in plans" v-bind:value="plan.id">{{plan.title}}</option>
+                        </select>
+                    </div>
+                </div>
+                <button v-bind:disabled="fieldDisabled" type="submit" class="btn btn-warning">{{btnSubmitValue}}</button>
+            </form>
+            {% endraw %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{baseUrl}}/js/jquery.min.js"></script>
+<script src="{{baseUrl}}/js/vue.js"></script>
+<script src="{{baseUrl}}/bootstrap4/js/bootstrap.bundle.min.js"></script>
+<script>
+    var form = new Vue({
+        el: '#form-calendar-create',
+        data: {
+            monthNames: {{months | safe}},
+            formUrl: '{{baseUrl}}/account/calendar/create.json',
+            btnSubmitValue: 'Create Calendar',
+            title:'',
+            dateAnchorPoint:'end',
+            month:{{now.format("M")}},
+            day: {{now.format("D")}},
+            year: {{now.format("YYYY")}},
+            plans: {{ plans | safe }},
+            planId:'',
+            fieldDisabled: false,
+            alertClass: 'alert',
+            alertMessage:'',
+            alertShow: false
+        },
+        methods: {
+            onSubmit: function(e){
+                var me = this;
+                me.btnSubmitValue = 'Creating...'
+                me.fieldDisabled = true;
+
+                var formData = jQuery('#'+me.$el.id).serializeArray();
+                jQuery.post(me.formUrl, formData).then(function(data){
+                    me.alertShow = true;
+                    me.alertClass = 'alert alert-success';
+                    me.alertMessage = 'Calendar created, please wait...';
+                    window.location.replace(data.redirectTo);
+                }).fail(function(jqXHR, textStatus, httpError){
+                    var error = jqXHR.responseJSON || ['Unknown error'];
+                    me.alertShow = true;
+                    me.alertClass = 'alert alert-danger';
+                    me.alertMessage = error.shift();
+                }).always(function(){
+                    me.btnSubmitValue = 'Create Calendar'
+                    me.fieldDisabled = false;
+                });
+            }
+        }
+    });
+</script>
+{% endblock %}

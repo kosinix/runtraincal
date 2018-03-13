@@ -1,0 +1,21 @@
+{% extends "body.html" %}
+
+{% block main %}
+<div class="container main">
+    <div class="row">
+        <div class="col form">
+            <h1>Welcome!</h1>
+            {{calendars|dump}}
+            {% if calendars.length %}
+                <ul>
+                {% for calendar in calendars %}
+                    <li><a href="/account/calendar/view/{{calendar.uid}}">{{calendar.title}}</a></li>
+                {% endfor %}
+                </ul>
+            {% else %}
+            <p>No calendar</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

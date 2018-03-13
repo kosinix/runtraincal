@@ -1,0 +1,5 @@
+node_modules/*
+credentials
+app.db
+data/sessions.db
+.idea/*

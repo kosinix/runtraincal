@@ -1,0 +1,82 @@
+{% extends "body.html" %}
+
+{% block main %}
+<div class="container main">
+    <div class="row justify-content-center register">
+        <div class="col-lg-4 col-sm-8 form">
+            {% raw %}
+            <form v-cloak v-on:submit.prevent="onSubmit" v-bind:action="formUrl" id="form-login" class="form-login" method="POST">
+                <div v-if="showMessage" v-bind:class="messageClass" role="alert">{{message}}</div>
+                <input v-model="redirectTo" type="hidden" name="redirectTo">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input v-model="email" v-bind:disabled="emailDisabled" type="email" name="email" class="form-control" id="email" placeholder="Enter email" autocomplete="username email">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input v-model="password" v-bind:disabled="passwordDisabled" type="password" name="password" minlength="8" class="form-control" id="password" placeholder="Password" autocomplete="current-password">
+                </div>
+                <p><a href="/forgot-password.html">Forgot password?</a></p>
+                <div class="form-group text-center">
+                    <button v-bind:disabled="btnSubmitDisabled" type="submit" class="btn btn-lg btn-warning">{{btnSubmitValue}}</button>
+                </div>
+                <p class="text-center">Don't have an account yet? <br><a href="/account/register.html">Create a Free Account</a></p>
+
+            </form>
+            {% endraw %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{baseUrl}}/js/jquery.min.js"></script>
+<script src="{{baseUrl}}/js/vue.min.js"></script>
+<script src="{{baseUrl}}/bootstrap4/js/bootstrap.bundle.min.js"></script>
+<script>
+    var form = new Vue({
+        el: '#form-login',
+        data: {
+            formUrl: "{{baseUrl}}/account/login.json",
+            redirectTo: "{{redirectTo}}",
+            btnSubmitValue: "Login",
+            email:"",
+            password:"",
+            emailDisabled: false,
+            passwordDisabled: false,
+            btnSubmitDisabled: false,
+            messageClass: "alert",
+            message:"",
+            showMessage: false
+        },
+        methods: {
+            onSubmit: function(e){
+                var me = this;
+                me.btnSubmitValue = "Logging in..."
+                me.emailDisabled = true;
+                me.passwordDisabled = true;
+                me.btnSubmitDisabled = true;
+                jQuery.post(me.formUrl, {
+                    redirectTo: me.redirectTo,
+                    email: me.email,
+                    password: me.password
+                }).then(function(data){
+                    me.showMessage = true;
+                    me.messageClass = "alert alert-success";
+                    me.message = "Login successful, please wait...";
+                    window.location.replace(data.redirectTo);
+                }).fail(function(jqXHR, textStatus, httpError){
+                    var error = jqXHR.responseJSON || ["Unknown error"];
+                    me.showMessage = true;
+                    me.messageClass = "alert alert-danger";
+                    me.message = error.shift();
+                }).always(function(){
+                    me.btnSubmitValue = "Login"
+                    me.emailDisabled = false;
+                    me.passwordDisabled = false;
+                    me.btnSubmitDisabled = false;
+                });
+            }
+        }
+    });
+</script>
+{% endblock %}

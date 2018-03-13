@@ -1,0 +1,206 @@
+{% extends "body.html" %}
+
+{% block main %}
+    {%raw%}
+    <div class="container main">
+    <h1 id="title" v-cloak>Sample Calendar: {{trainingPlan.title}}</h1>
+    <div class="alert alert-warning">
+        <strong>Note:</strong> This is a sample calendar that runs on your browser only. You can customize this calendar by going to your account. <a class="btn btn-warning btn-md" href="/account/calendars.html" role="button">Go to Account</a>
+    </div>
+    <div id="actionButtons" class="row action-bar" v-cloak>
+        <div class="col col-xs-4 action-today">
+            <div class="btn-group" role="group" aria-label="pagination">
+                <button v-on:click="goNav" data-direction="prev" class="btn btn-light" aria-label="Left Align">
+                    <svg fill="#000000" width="26" height="26" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                    </svg>
+                </button>
+                <button v-on:click="goNav" data-direction="now" class="btn btn-light" aria-label="Today">
+                    <span>Today</span>
+                </button>
+                <button v-on:click="goNav" data-direction="next" class="btn btn-light">
+                    <svg fill="#000000" width="26" height="26" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div class="col col-xs-4 action-year">
+            <h1><a href="#">{{ month.name }} {{ month.year }}</a></h1>
+        </div>
+        <div class="col col-xs-4 action-page">
+            <a href="#" class="btn btn-light" data-toggle="modal" data-target="#modal-settings">
+                <svg fill="#000000" width="26" height="26" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0 0h24v24H0z" fill="none"/>
+                    <path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/>
+                </svg>
+            </a>
+        </div>
+    </div>
+    <table id="table" class="table calendar" v-if="view==='month'" v-cloak>
+        <thead>
+            <tr>
+                <th v-for="(weekDay, index) in month.weekDays">{{weekDay}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr v-for="(row, index) in month.matrix">
+                <td v-for="(dayObject, index) in row" v-bind:class="dayObject.cssClass">
+                    <div class="date">
+                    <div class="day">
+                        <a href="/account/calendars.html">{{dayObject.day}}</a>
+                    </div>
+                    <div v-for="(info, index) in dayObject.info" class="event">{{info.title}}</div>
+                    </div><!-- .date -->
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="modal fade" id="modal-settings" tabindex="-1" role="dialog" aria-labelledby="Settings" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Calendar Settings</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form>
+                <div class="form-group">
+                    <div class="form-row">
+                        <div class="form-group col">
+                            <label for="">Start Date</label>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        
+                        <div class="form-group col">
+                            <select class="form-control" name="month" id="month" v-model="month">
+                                <option value="1">January</option>
+                                <option value="2">February</option>
+                                <option value="3">March</option>
+                                <option value="4">April</option>
+                                <option value="5">May</option>
+                                <option value="6">June</option>
+                                <option value="7">July</option>
+                                <option value="8">August</option>
+                                <option value="9">September</option>
+                                <option value="10">October</option>
+                                <option value="11">November</option>
+                                <option value="12">December</option>
+                            </select>
+                        </div>
+                        <div class="form-group col">
+                            <input class="form-control" name="day" type="number" min="1" max="31" placeholder="Day" v-model="day" value="1">
+
+                        </div>
+                        <div class="form-group col">
+                            <input class="form-control" name="year" type="number" min="1970" max="2999" placeholder="Year" v-model="year" value="">
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button v-on:click="onSave" type="button" data-dismiss="modal" class="btn btn-primary">Save changes</button>
+        </div>
+        </div>
+    </div>
+    </div><!-- .modal -->
+    </div><!-- .container -->
+    {% endraw %}
+{% endblock %}
+
+{% block scripts %}
+<script src="{{baseUrl}}/js/jquery.min.js"></script>
+<script src="{{baseUrl}}/js/moment.min.js"></script>
+<script src="{{baseUrl}}/js/lodash.min.js"></script>
+<script src="{{baseUrl}}/js/helper.js"></script>
+<script src="{{baseUrl}}/js/vue.min.js"></script>
+<script src="{{baseUrl}}/bootstrap4/js/bootstrap.bundle.min.js"></script>
+<script>
+var lodash = _;
+var trainingPlan = {{ trainingPlanJson | safe }}; // Training plan general info
+var trainingData = {{ trainingDataJson | safe }}; // Training plan specific data
+var monthView = {{ monthJson | safe }}; // Gregorian month view
+var momentTrainStartDate = moment.utc();
+
+trainingData = helper.adjustTrainingData(trainingData, momentTrainStartDate);
+monthView = helper.attachTrainingDataTo(monthView, trainingData);
+
+var title = new Vue({
+  el: '#title',
+  data: {
+    trainingPlan: trainingPlan
+  }
+});
+
+var table = new Vue({
+  el: '#table',
+  data: {
+    month: monthView,
+    view: 'month'
+  }
+});
+
+var modal = new Vue({
+  el: '#modal-settings',
+  data: {
+    year: table.month.nowYear,
+    month: table.month.nowMonth,
+    day: table.month.nowDay,
+    startDate: momentTrainStartDate.format('YYYY-MM-DD'),
+  },
+  methods: {
+      onSave: function(e){
+
+        this.startDate = moment.utc(helper.isoDate(this.year, this.month, this.day));
+        
+        trainingData = helper.adjustTrainingData(trainingData, this.startDate);
+
+        monthView = helper.attachTrainingDataTo(monthView, trainingData);
+
+        table.month = monthView;
+        actionButtons.month = monthView;
+      }
+  }
+});
+
+var actionButtons = new Vue({
+    el:'#actionButtons',
+    data: {
+        month: monthView
+    },
+    methods:{
+        goNav: function(e){
+            e.preventDefault();
+
+            var dir = e.currentTarget.getAttribute('data-direction');
+            var endPoint = '/api/matrix/';
+            var url = endPoint +this.month.nextMonthYear+'/'+this.month.nextMonthNumber;
+            
+            if(dir === 'prev'){
+                url = endPoint +this.month.prevMonthYear+'/'+this.month.prevMonthNumber;
+            }
+            if(dir === 'now'){
+                url = endPoint + this.month.nowYear + '/' + this.month.nowMonth;
+            }
+
+            jQuery.get(url).then(function(newMonthView){
+                monthView = helper.attachTrainingDataTo(newMonthView, trainingData);
+                table.month = monthView;
+                actionButtons.month = monthView;
+            }).catch(function(err){
+                console.log('error:', err);
+            });
+        }
+    }
+});
+
+
+</script>
+{% endblock %}

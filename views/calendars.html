@@ -1,0 +1,24 @@
+{% extends "body.html" %}
+
+{% block main %}
+<div class="container main">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Sample Calendars</h2>
+            <p>Sample calendars are provided as starting point for your training plan. Nothing is stopping you from creating your own training calendar from scratch.</p>
+            {% if calendars %}
+                <ul>
+                {% for calendar in calendars %}
+                    <li>
+                        <h6><a href="{{baseUrl}}/demo/plan/{{calendar.uid}}">{{calendar.title}}</a></h6>
+                        <p>{{calendar.description }}</p>
+                    </li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                <h6>No calendars.</h6>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

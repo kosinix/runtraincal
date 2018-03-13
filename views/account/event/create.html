@@ -1,0 +1,39 @@
+{% extends "body.html" %}
+
+{% block main %}
+<div class="container main">
+    <div class="row justify-content-center">
+        <div class="col col-xs-12">
+            <h1> Training Day: {{dayView.year}}-{{dayView.month}}-{{dayView.day}}</h1>
+            <form action="{{baseUrl}}/account/event/create?uid={{uid}}&year={{dayView.year}}&month={{dayView.month}}&day={{dayView.day}}" method="POST">
+                
+                <div class="form-row">
+                    <div class="form-group col-12 col-sm-6">
+                        <label for="title">Title</label>
+                        <input type="text" name="title" class="form-control" id="title">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-12 col-sm-6">
+                        <label for="description">Description (Separate by newline)</label>
+                        <textarea class="form-control" name="description" id="description" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-12 col-sm-6">
+                        <label for="workoutType">Type</label>
+                        <select class="form-control custom-select" name="workoutType" id="workoutType">
+                            <option value="run">Run</option>
+                            <option value="rest">Rest</option>
+                            <option value="weight">Weight</option>
+                            <option value="race">Race!</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-warning">Add Data</button>
+            </form>
+            
+        </div>
+    </div>
+</div>
+{% endblock %}

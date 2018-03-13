@@ -1,0 +1,61 @@
+<div class="modal fade" id="modal-config" tabindex="-1" role="dialog" aria-labelledby="Settings" aria-hidden="true">
+<form action="{{baseUrl}}/account/calendar/update" method="POST">
+  
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Calendar Settings</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+            <input type="hidden" name="id" value="{{calendar.id}}">
+            <div class="form-row">
+                <div class="form-group col">
+                    <label for="title">Training Calendar Name</label>
+                    <input type="text" name="title" class="form-control" id="title" value="{{calendar.title}}">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-3">
+                    <label class="date-is" for="dateAnchorPointEnd">Date is the:</label>
+                </div>
+                <div class="form-group col-5">
+                    <label class="custom-control custom-radio">
+                        <input id="dateAnchorPointEnd" name="dateAnchorPoint" value="end" type="radio" checked class="custom-control-input" {% if calendar.date_anchor_point == 'end'%}checked{%endif%}>
+                        <span class="custom-control-indicator"></span>
+                        <span class="custom-control-description">race/event date</span>
+                    </label> 
+                </div>
+                <div class="form-group col-4">
+                    <label class="custom-control custom-radio">
+                        <input id="dateAnchorPointStart" name="dateAnchorPoint" value="start" type="radio" class="custom-control-input" {% if calendar.date_anchor_point == 'start'%}checked{%endif%}>
+                        <span class="custom-control-indicator"></span>
+                        <span class="custom-control-description">start of training</span>
+                    </label>
+                </div>
+                <div class="form-group col-auto">
+                        <select class="custom-select form-control" name="month" id="month">
+                            {% for monthName in months %}
+                        <option {% if calendar.date.format('M') == loop.index%}selected{%endif%} value="{{loop.index}}">{{monthName}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group col-2">
+                    <input class="form-control" name="day" type="number" min="1" max="31" placeholder="Day" value="{{calendar.date.format('D')}}">
+                </div>
+                <div class="form-group col-3">
+                    <input class="form-control" name="year" type="number" min="1970" max="2999" placeholder="Year" value="{{calendar.date.format('YYYY')}}">
+                </div>
+            </div>
+            
+        
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-warning">Update Calendar</button>
+      </div>
+    </div>
+  </div>
+  </form>
+</div>
