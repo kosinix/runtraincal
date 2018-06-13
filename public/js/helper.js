@@ -1,15 +1,19 @@
 var lodash = _;
 var helper = {
-    isoDate: function (year, month, day, hour=0, min=0, s=0, ms=0){
-        var year = lodash.padStart(year, 4, '0');
-        var month = lodash.padStart(month, 2, '0');
-        var day = lodash.padStart(day, 2, '0');
+    isoDate: function (year, month, day, hour, min, s, ms){
+        hour = hour || 0;
+        min = min || 0;
+        s = s || 0;
+        ms = ms || 0;
 
-        var hour = lodash.padStart(hour, 2, '0');
-        var min = lodash.padStart(min, 2, '0');
-        var s = lodash.padStart(s, 2, '0');
-        var ms = lodash.padStart(ms, 3, '0');
+        year = lodash.padStart(year, 4, '0');
+        month = lodash.padStart(month, 2, '0');
+        day = lodash.padStart(day, 2, '0');
 
+        hour = lodash.padStart(hour, 2, '0');
+        min = lodash.padStart(min, 2, '0');
+        s = lodash.padStart(s, 2, '0');
+        ms = lodash.padStart(ms, 3, '0');
 
         return year+'-'+month+'-'+day+'T'+hour+':'+min+':'+s+'.'+ms+'Z';
     },
@@ -26,7 +30,7 @@ var helper = {
      * @return {Array} 
      */
     generateDays: function(count){
-        return Array.from(Array(count).keys()).map((e,i)=>i+1); // 1-count
+        return lodash.times(count, function(i){ return i+1 });
     },
     computeStartDateFromEndDate: function(momentEndDate, trainingDays){
         // var trainingDays = trainingData[trainingData.length-1].trainingDay;
@@ -41,7 +45,7 @@ var helper = {
     },
     attachTrainingDataTo: function(monthView, trainingData){
         var fnMapMonth = function(row){
-            row = row.map(function(dayObject){
+            row = lodash.map(row, function(dayObject){
                 var items = lodash.filter(trainingData, function(el){
                     return el.date === dayObject.iso.split('T')[0];
                 });
@@ -53,7 +57,7 @@ var helper = {
                 }
                 dayObject.info = [];
 
-                lodash.forEach(items, function(gold, key){
+                lodash.each(items, function(gold, key){
                     dayObject.info.push({
                         title: gold.title,
                         description: gold.description,
@@ -70,8 +74,8 @@ var helper = {
     },
     attachCalendarData: function(momentNow, momentCurrent, matrix, calendarData){
 
-        return matrix.map((row)=>{
-            return lodash.map(row, (day) => {
+        return lodash.map(matrix, function(row) {
+            return lodash.map(row, function(day) {
                 var items = lodash.filter(calendarData, function(el){
                     return el.date === dayObject.iso.split('T')[0];
                 });
