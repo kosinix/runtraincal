@@ -1,114 +1,51 @@
 {% extends "document.html" %}
-
-{% block headAssets %}
-	<link href="{{baseUrl}}/bootstrap4/css/bootstrap.css" rel="stylesheet">
-	<link href="{{baseUrl}}/css/style2.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css?family=Anton" rel="stylesheet">
-	<!--[if lt IE 9]>
-		<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-		<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-	<![endif]-->
-{% endblock %}
-
 {% block body %}
-
-
+{% include "include/facebook-sdk.html" %}
 <div class="container-fluid container-home">
   <div class="row-top">
     <a href="https://twitter.com/runtrainingcal?ref_src=twsrc%5Etfw" class="twitter-follow-button" data-show-count="false">Follow @runtrainingcal</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
     <a href="https://www.facebook.com/runtrainingcalendar/" target="_blank"><svg width="20px" height="20px" viewBox="3 3 18 18"><path fill="#365899" d="M5,3h14c1.104,0,2,0.896,2,2v14c0,1.104-0.896,2-2,2H5c-1.104,0-2-0.896-2-2V5C3,3.896,3.896,3,5,3 M18,5h-2.5C13.566,5,12,6.567,12,8.5V11h-2v3h2v7h3v-7h3v-3h-3V9c0-0.552,0.447-1,1-1h2V5z"/></svg></a>
+    
+    <a class="btn-account" href="/account/calendars.html" target="_blank"><svg style="width:20px;height:20px" viewBox="0 0 24 24"><path fill="#FFF" d="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z" /></svg></a>
   </div>
-  <div id="calendar-view" class="calendar-view" v-cloak>
-    <div class="question">${question}</div>
-    <button v-if="page>1" v-bind:disabled="disabled" v-on:click="setPage(page-1)" class="undo"><svg style="width:24px;height:24px" viewBox="0 0 24 24"><path fill="#000000" d="M13.5,7A6.5,6.5 0 0,1 20,13.5A6.5,6.5 0 0,1 13.5,20H10V18H13.5C16,18 18,16 18,13.5C18,11 16,9 13.5,9H7.83L10.91,12.09L9.5,13.5L4,8L9.5,2.5L10.92,3.91L7.83,7H13.5M6,18H8V20H6V18Z" /></svg></button>
-    <div class="q-cards" v-bind:data-page="page">
-      <div class="q-card q-card-1" v-bind:data-active="isActive(1)">
-        <input v-model="calendarName" v-bind:class="shake1" v-bind:placeholder="placeholder1" id="calendar-name" type="text">
-        <button v-on:click="setPage(2)">Set Name</button>
-      </div>
-      <div class="q-card q-card-2" v-bind:data-active="isActive(2)">
-        <input v-model="calendarDate" v-bind:class="shake2" id="event-date" type="date" >
-        <div class="anchor-options">
-          <label for="dateAnchorPointEnd"><input v-model="anchor" id="dateAnchorPointEnd" type="radio" name="dateAnchorPoint" value="end"> Race or Event Date</label>
-          <label for="dateAnchorPointStart"><input v-model="anchor" id="dateAnchorPointStart" type="radio" name="dateAnchorPoint" value="start"> Start Date</label>
-        </div>
-        <button v-on:click="setPage(3)">Set Date</button>
-      </div>
-      <div class="q-card q-card-3" v-bind:data-active="isActive(3)">
-        <select v-model="planUid" v-bind:class="shake3" name="plan" id="plan">
-          <option value="0">None - Give me a blank slate</option>
-          {% for plan in plans %}
-            <option value="{{plan.uid}}">{{plan.title}}</option>
-          {% endfor %}
-        </select>
-        <button v-on:click="setPage(4)" v-bind:disabled="disabled">Create Calendar</button>
-      </div>
+  
+  <div id="calendar-view" class="cloaker" v-cloak>
+    <div class="loading">
+      <svg width="45px"  height="45px"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="lds-cube" style="background: none;"><g transform="translate(25,25)"><rect ng-attr-x="{{config.dp}}" ng-attr-y="{{config.dp}}" ng-attr-width="{{config.blockSize}}" ng-attr-height="{{config.blockSize}}" ng-attr-fill="{{config.c1}}" x="-15" y="-15" width="30" height="30" fill="#029AE4" transform="scale(1.00725 1.00725)"><animateTransform attributeName="transform" type="scale" calcMode="spline" values="1.5;1" keyTimes="0;1" dur="1s" keySplines="0 0.5 0.5 1" begin="-0.3s" repeatCount="indefinite"></animateTransform></rect></g><g transform="translate(75,25)"><rect ng-attr-x="{{config.dp}}" ng-attr-y="{{config.dp}}" ng-attr-width="{{config.blockSize}}" ng-attr-height="{{config.blockSize}}" ng-attr-fill="{{config.c2}}" x="-15" y="-15" width="30" height="30" fill="#33B677" transform="scale(1.01968 1.01968)"><animateTransform attributeName="transform" type="scale" calcMode="spline" values="1.5;1" keyTimes="0;1" dur="1s" keySplines="0 0.5 0.5 1" begin="-0.2s" repeatCount="indefinite"></animateTransform></rect></g><g transform="translate(25,75)"><rect ng-attr-x="{{config.dp}}" ng-attr-y="{{config.dp}}" ng-attr-width="{{config.blockSize}}" ng-attr-height="{{config.blockSize}}" ng-attr-fill="{{config.c3}}" x="-15" y="-15" width="30" height="30" fill="#FFC107" transform="scale(1.06458 1.06458)"><animateTransform attributeName="transform" type="scale" calcMode="spline" values="1.5;1" keyTimes="0;1" dur="1s" keySplines="0 0.5 0.5 1" begin="0s" repeatCount="indefinite"></animateTransform></rect></g><g transform="translate(75,75)"><rect ng-attr-x="{{config.dp}}" ng-attr-y="{{config.dp}}" ng-attr-width="{{config.blockSize}}" ng-attr-height="{{config.blockSize}}" ng-attr-fill="{{config.c4}}" x="-15" y="-15" width="30" height="30" fill="#029AE4" transform="scale(1.03905 1.03905)"><animateTransform attributeName="transform" type="scale" calcMode="spline" values="1.5;1" keyTimes="0;1" dur="1s" keySplines="0 0.5 0.5 1" begin="-0.1s" repeatCount="indefinite"></animateTransform></rect></g></svg>
+      <p>Loading...</p>
     </div>
-    <div id="calendar"></div>
-    <div v-if="calendarData" class="row-calendar">
-        <div class="action-bar" v-cloak>
-            <div class="action-nav">
-                <div class="btn-group" role="group" aria-label="pagination">
-                    <button v-on:click="prevMonth" class="btn btn-light" aria-label="Last Month">
-                        <svg fill="#000000" width="26" height="26" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
-                            <path d="M0 0h24v24H0z" fill="none"/>
-                        </svg>
-                    </button>
-                    <button v-on:click="today" class="btn btn-light" aria-label="Today">
-                        <span>Today</span>
-                    </button>
-                    <button v-on:click="nextMonth" class="btn btn-light" aria-label="Next Month">
-                        <svg fill="#000000" width="26" height="26" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
-                            <path d="M0 0h24v24H0z" fill="none"/>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-            <div class="action-year">
-                <h1>${ monthName } ${ year }</h1>
-            </div>
-            <div class="action-page">
-                <button v-on:click="onConfig" class="btn btn-light">
-                    <svg fill="#000000" width="26" height="26" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M0 0h24v24H0z" fill="none"/>
-                        <path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/>
-                    </svg>
-                </button>
-            </div>
+    <div class="hid-me">
+      <div class="question">${question}</div>
+      <button v-if="page>1" v-bind:disabled="disabled" v-on:click="setPage(page-1)" class="undo"><svg style="width:24px;height:24px" viewBox="0 0 24 24"><path fill="#000000" d="M13.5,7A6.5,6.5 0 0,1 20,13.5A6.5,6.5 0 0,1 13.5,20H10V18H13.5C16,18 18,16 18,13.5C18,11 16,9 13.5,9H7.83L10.91,12.09L9.5,13.5L4,8L9.5,2.5L10.92,3.91L7.83,7H13.5M6,18H8V20H6V18Z" /></svg></button>
+      <div class="q-cards" v-bind:data-page="page">
+        <div class="q-card q-card-1" v-bind:data-active="isActive(1)">
+          <input v-model="calendarName" v-bind:class="shake1" v-bind:placeholder="placeholder1" id="calendar-name" type="text">
+          <button v-on:click="setPage(2)">Set Name</button>
         </div>
-        <div class="table-port">
-          <table id="table" class="table calendar" v-cloak>
-              <thead>
-                  <tr>
-                      <th v-for="(weekDay, index) in weekDays">${weekDay}</th>
-                  </tr>
-              </thead>
-              <tbody>
-                  <tr v-for="(row, y) in matrix">
-                      <td v-for="(col, x) in row" v-on:click="onDate(col)" v-bind:class="col.type">
-                          <div class="date">
-                            <div class="day">
-                                ${col.day}
-                            </div>
-                            <div v-for="(info, index) in col.info" class="event" v-bind:data-type="info.workoutType">${info.title}</div>
-                          </div><!-- .date -->
-                      </td>
-                  </tr>
-              </tbody>
-          </table>
+        <div class="q-card q-card-2" v-bind:data-active="isActive(2)">
+          <input v-model="calendarDate" v-bind:class="shake2" id="event-date" type="date" >
+          <div class="anchor-options">
+            <label for="dateAnchorPointEnd"><input v-model="anchor" id="dateAnchorPointEnd" type="radio" name="dateAnchorPoint" value="end"> Race or Event Date</label>
+            <label for="dateAnchorPointStart"><input v-model="anchor" id="dateAnchorPointStart" type="radio" name="dateAnchorPoint" value="start"> Start Date</label>
+          </div>
+          <button v-on:click="setPage(3)">Set Date</button>
         </div>
-        <h2 v-if="calendarName">${calendarName}</h2>
-        <div class="save-bar">
-          <button v-on:click="saveCalendar" v-bind:disabled="disabled" class="btn btn-warning">Save Calendar</button>
-          <a href="/account/calendars.html" target="_blank" class="btn btn-warning">My Account</a>
+        <div class="q-card q-card-3" v-bind:data-active="isActive(3)">
+          <select v-model="planUid" v-bind:class="shake3" name="plan" id="plan">
+            <option value="0">None - Give me a blank slate</option>
+            {% for plan in plans %}
+              <option value="{{plan.uid}}">{{plan.title}}</option>
+            {% endfor %}
+          </select>
+          <button v-on:click="setPage(4)" v-bind:disabled="disabled">Create Calendar</button>
         </div>
-        <div v-bind:data-show="showDayView" class="day-view">
-          <div class="action-bar">
+      </div>
+      <div id="calendar"></div>
+      <div v-if="calendarData" class="row-calendar">
+          <div class="action-bar" v-cloak>
               <div class="action-nav">
                   <div class="btn-group" role="group" aria-label="pagination">
-                      <button v-on:click="yesterday" class="btn btn-light" aria-label="Yesterday">
+                      <button v-on:click="prevMonth" class="btn btn-light" aria-label="Last Month">
                           <svg fill="#000000" width="26" height="26" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                               <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
                               <path d="M0 0h24v24H0z" fill="none"/>
@@ -117,7 +54,7 @@
                       <button v-on:click="today" class="btn btn-light" aria-label="Today">
                           <span>Today</span>
                       </button>
-                      <button v-on:click="tomorrow" class="btn btn-light" aria-label="Tomorrow">
+                      <button v-on:click="nextMonth" class="btn btn-light" aria-label="Next Month">
                           <svg fill="#000000" width="26" height="26" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                               <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
                               <path d="M0 0h24v24H0z" fill="none"/>
@@ -126,32 +63,94 @@
                   </div>
               </div>
               <div class="action-year">
-                  <h1>${ monthName } ${ selectedDay }, ${ year } - ${ weekDayName }</h1>
+                  <h1>${ monthName } ${ year }</h1>
               </div>
               <div class="action-page">
-                  <button v-on:click="hideDayView" class="btn btn-light">
-                      <svg style="width:26px;height:26px" viewBox="0 0 24 24"><path fill="#000000" d="M13.46,12L19,17.54V19H17.54L12,13.46L6.46,19H5V17.54L10.54,12L5,6.46V5H6.46L12,10.54L17.54,5H19V6.46L13.46,12Z" /></svg>
+                  <button v-on:click="onConfig" class="btn btn-light">
+                      <svg fill="#000000" width="26" height="26" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M0 0h24v24H0z" fill="none"/>
+                          <path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/>
+                      </svg>
                   </button>
               </div>
           </div>
-          <div class="workout-buttons">
-            <button v-on:click="modalWorkout" class="btn btn-sm btn-primary">Add Workout</button>
+          <div class="table-port">
+            <table id="table" class="table calendar" v-cloak>
+                <thead>
+                    <tr>
+                        <th v-for="(weekDay, index) in weekDays">${weekDay}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(row, y) in matrix">
+                        <td v-for="(col, x) in row" v-on:click="onDate(col)" v-bind:class="col.type">
+                            <div class="date">
+                              <div class="day">
+                                  ${col.day}
+                              </div>
+                              <div v-for="(info, index) in col.info" class="event" v-bind:data-type="info.workoutType">${info.title}</div>
+                            </div><!-- .date -->
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
           </div>
-          <ul class="event">
-            <li v-for="(infos, group) in dayInfo">
-              <h6>${group}</h6>
-              <ul>
-                <li v-for="info in infos">
-                  <p>${info.title}</p>
-                  <pre>${info.description}</pre>
-                  <button v-on:click="onDeleteDayInfo(info.date, info.index)" class="btn btn-sm btn-warning">Delete</button>
-                </li>
-              </ul>
-            </li>
-            <li v-if="!hasDayInfo()">No workouts for this day.</li>
-          </ul>
-        </div>
-    </div>
+          <h2 v-if="calendarName">${calendarName}</h2>
+          <div class="save-bar">
+            <button v-on:click="saveCalendar" v-bind:disabled="disabled" class="btn btn-warning">Save Calendar</button>
+            <a href="/account/calendars.html" target="_blank" class="btn btn-warning">My Account</a>
+          </div>
+          <div v-bind:data-show="showDayView" class="day-view">
+            <div class="action-bar">
+                <div class="action-nav">
+                    <div class="btn-group" role="group" aria-label="pagination">
+                        <button v-on:click="yesterday" class="btn btn-light" aria-label="Yesterday">
+                            <svg fill="#000000" width="26" height="26" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                                <path d="M0 0h24v24H0z" fill="none"/>
+                            </svg>
+                        </button>
+                        <button v-on:click="today" class="btn btn-light" aria-label="Today">
+                            <span>Today</span>
+                        </button>
+                        <button v-on:click="tomorrow" class="btn btn-light" aria-label="Tomorrow">
+                            <svg fill="#000000" width="26" height="26" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+                                <path d="M0 0h24v24H0z" fill="none"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="action-year">
+                    <h1>${ monthName } ${ selectedDay }, ${ year } - ${ weekDayName }</h1>
+                </div>
+                <div class="action-page">
+                    <button v-on:click="hideDayView" class="btn btn-light">
+                        <svg style="width:26px;height:26px" viewBox="0 0 24 24"><path fill="#000000" d="M13.46,12L19,17.54V19H17.54L12,13.46L6.46,19H5V17.54L10.54,12L5,6.46V5H6.46L12,10.54L17.54,5H19V6.46L13.46,12Z" /></svg>
+                    </button>
+                </div>
+            </div>
+            <div class="workout-buttons">
+              <button v-on:click="modalWorkout" class="btn btn-sm btn-primary">Add Workout</button>
+            </div>
+            <ul class="event">
+              <li v-for="(infos, group) in dayInfo">
+                <h6>${group}</h6>
+                <ul>
+                  <li v-for="info in infos">
+                    <p>${info.title}</p>
+                    <pre>${info.description}</pre>
+                    <button v-on:click="onDeleteDayInfo(info.date, info.index)" class="btn btn-sm btn-warning">Delete</button>
+                  </li>
+                </ul>
+              </li>
+              <li v-if="!hasDayInfo()">No workouts for this day.</li>
+            </ul>
+          </div>
+      </div>
+      <a href="https://www.kosinix.com/hire-me" target="_blank" class="hire-me-please">By: kosinix</a>
+      
+    </div><!-- .hid.me -->
   </div>
 </div>
 <div class="modal fade" id="modal-login" tabindex="-1" role="dialog" aria-labelledby="Login" aria-hidden="true">
@@ -181,6 +180,13 @@
                 <button v-bind:disabled="disabled" type="submit" class="btn btn-lg btn-warning">Login</button>
             </div>
             <p class="text-center">Don't have an account yet? <br><a target="_blank" href="/account/register.html">Create a Free Account</a></p>
+            <div v-if="!isAuth" class="or-social-logins">
+              <p class="sep"><span>Or</span></p>
+              <button v-bind:disabled="disabled" v-on:click="showFbLogin" class="btn-fb">
+                <svg width="18px" height="18px" viewBox="3 3 18 18"><path fill="#fff" d="M5,3h14c1.104,0,2,0.896,2,2v14c0,1.104-0.896,2-2,2H5c-1.104,0-2-0.896-2-2V5C3,3.896,3.896,3,5,3 M18,5h-2.5C13.566,5,12,6.567,12,8.5V11h-2v3h2v7h3v-7h3v-3h-3V9c0-0.552,0.447-1,1-1h2V5z"/></svg>
+                <span>Login with facebook</span>
+              </button>
+            </div>
           </form>
         </div>
       </div>
@@ -234,22 +240,21 @@
 
 {% endblock %}
 
-{% block script %}
-<script src="{{baseUrl}}/js/jquery.min.js"></script>
-<script src="{{baseUrl}}/bootstrap4/js/bootstrap.bundle.min.js"></script>
+{% block scripts %}
+{{super()}}
 <script src="{{baseUrl}}/js/moment.min.js"></script>
-<script src="{{baseUrl}}/js/lodash.min.js"></script>
-<script src="{{baseUrl}}/js/vue.js"></script>
+<script src="{{baseUrl}}/js/vue.min.js"></script>
 <script src="{{baseUrl}}/js/helper.js"></script>
 <script>
-var momentNow = moment.utc().add(this.timeZone, 'hours');
+
+var momentNow = moment.utc().add(helper.getMyTimeZone(), 'hours');
 
 var vHomeCalendar = new Vue({
   el: "#calendar-view",
   delimiters: ["${", "}"],
   data: {
     page: 1,
-    placeholders: ["Eg. My 10k Plan", "Eg. Pre-conditioning", "Eg. Half-Marathon", "Eg. Lose Weight", "Eg. My Ultimate Plan!"],
+    placeholders: ["Eg. My 10k Plan", "Eg. Pre-conditioning", "Eg. Half-Marathon", "Eg. Lose Weight", "Eg. My Ultimate Plan!", "Eg. Sub 1 10k"],
     placeholderIndex: 0,
     questions: ["Name your calendar", "When is your event?", "When will you start?", "Choose a preset"],
     calendarName: "",
@@ -271,17 +276,20 @@ var vHomeCalendar = new Vue({
   },
   mounted: function(){
     var me = this;
-    var timeouts = [5000, 2000, 3000, 5000, 4000];
-    var timeout = 0;
+    var index = 0;
+    var max = me.placeholders.length-1;
+    me.placeholders = lodash.shuffle(me.placeholders);
     setInterval(function(){
-      var max = me.placeholders.length-1;
-      var min = 0;
-      me.placeholderIndex = Math.floor(Math.random() * (max - min + 1)) + min;
+      if(index>max){
+        index = 0;
+      }
+      me.placeholderIndex = index;
+      index++;
     }, 2000);
 
     this.calendarDate = moment().format('YYYY-MM-DD');
 
-
+    
     // this.calendarName = "Test2";
     // this.anchor = "start";
     // this.page = 3;
@@ -568,6 +576,7 @@ var vModalLogin = new Vue({
     btnSubmitValue: "Login",
     messageClass: "alert",
     message:"",
+    isAuth: window.isAuth
   },
   methods: {
     onSubmit: function(e){
@@ -585,28 +594,7 @@ var vModalLogin = new Vue({
           me.messageClass = "alert alert-success";
           me.message = "Login successful, please wait...";
           $('#modal-login').modal('hide');
-          // window.location.replace(data.redirectTo);
-          // me.disabled = "disabled";
-          // console.log(data);
-          // var data = {
-          //   title: vHomeCalendar.calendarName,
-          //   dateAnchorPoint: vHomeCalendar.anchor,
-          //   month: vHomeCalendar.month,
-          //   day: vHomeCalendar.day,
-          //   year: vHomeCalendar.year,
-          //   calendarDataCollection: JSON.stringify(vHomeCalendar.calendarData),
-          // }; 
-          // console.log(JSON.stringify(vHomeCalendar.calendarData));
-          // jQuery.post('/api/calendar-data/create.json', data ).then(function(result){
-          //   console.log(result);
-          //   $('#modal-login').modal('hide');
-          // }).fail(function(jqXHR, textStatus, httpError){
-          //   var error = jqXHR.responseJSON || ["Unknown error"];
-          //   me.messageClass = "alert alert-danger";
-          //   me.message = error.shift();
-          // }).always(function(){
-          //   me.disabled = null;
-          // });
+         
       }).fail(function(jqXHR, textStatus, httpError){
           var error = jqXHR.responseJSON || ["Unknown error"];
           me.messageClass = "alert alert-danger";
@@ -614,6 +602,47 @@ var vModalLogin = new Vue({
       }).always(function(){
           me.btnSubmitValue = btnSubmitValue
           me.disabled = null;
+      });
+    },
+    showFbLogin: function(e){
+      e.preventDefault();
+      var me = this;
+      var FB = lodash.get(window, 'FB', null);
+      if(!FB){
+        console.log('FB undefined');
+        return false;
+      }
+      me.disabled = "disabled";
+      FB.getLoginStatus(function(response) {
+        if (response.status === 'connected') {
+          console.log('You are logged in on FB.');
+          var userID = response.authResponse.userID;
+          var accessToken = response.authResponse.accessToken;
+          jQuery.post('/api/fb-login.json', {
+            accessToken: accessToken,
+            userId: userID,
+          }).then(function(result){
+            console.log('result', result); 
+            $('#modal-login').modal('hide');
+          }).always(function(){
+            me.disabled = null;
+          }).catch(function(err){
+            console.log('err', err);
+          });
+        // } else if (response.status === 'not_authorized') {
+        } else {
+          // the user hasnt authorized
+          // the user isn't logged in to Facebook.
+          FB.login(function(response){
+            me.disabled = null;
+            $('#modal-login').modal('hide');
+            console.log('fblogincb', response);
+          }, {
+            auth_type: 'rerequest'
+          });
+        }
+      }, {
+        auth_type: 'rerequest'
       });
     }
   }
@@ -666,5 +695,7 @@ var vModalWorkout = new Vue({
     }
   }
 });
+
+
 </script>
 {% endblock %}
