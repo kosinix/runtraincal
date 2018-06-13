@@ -376,6 +376,14 @@ app.get('/privacy-policy.html', async (req, res, next) => {
     }
 });
 
+app.get('/terms-of-service.html', async (req, res, next) => {
+    try {
+        res.render('terms-of-service.html');
+    } catch (err) {
+        next(err);
+    }
+});
+
 
 app.get('/contact-us.html', async (req, res, next) => {
     try {
