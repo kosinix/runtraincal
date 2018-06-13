@@ -1,79 +1,142 @@
 {% extends "body.html" %}
 
-{% block main %}
+{% block body %}
+{% include "include/facebook-sdk.html" %}
+{% include "include/nav.html" %}
 <div class="container main">
     <div class="row justify-content-center register">
         <div class="col-lg-4 col-sm-8 form">
-            {% raw %}
-            <form v-cloak v-on:submit.prevent="onSubmit" v-bind:action="formUrl" id="form-login" class="form-login" method="POST">
-                <div v-if="showMessage" v-bind:class="messageClass" role="alert">{{message}}</div>
-                <input v-model="redirectTo" type="hidden" name="redirectTo">
-                <div class="form-group">
-                    <label for="email">Email Address</label>
-                    <input v-model="email" v-bind:disabled="emailDisabled" type="email" name="email" class="form-control" id="email" placeholder="Enter email" autocomplete="username email">
+            <div id="form-login" class="cloaker" v-cloak>
+                <div class="loading">
+                <svg width="45px"  height="45px"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="lds-cube" style="background: none;"><g transform="translate(25,25)"><rect ng-attr-x="{{config.dp}}" ng-attr-y="{{config.dp}}" ng-attr-width="{{config.blockSize}}" ng-attr-height="{{config.blockSize}}" ng-attr-fill="{{config.c1}}" x="-15" y="-15" width="30" height="30" fill="#029AE4" transform="scale(1.00725 1.00725)"><animateTransform attributeName="transform" type="scale" calcMode="spline" values="1.5;1" keyTimes="0;1" dur="1s" keySplines="0 0.5 0.5 1" begin="-0.3s" repeatCount="indefinite"></animateTransform></rect></g><g transform="translate(75,25)"><rect ng-attr-x="{{config.dp}}" ng-attr-y="{{config.dp}}" ng-attr-width="{{config.blockSize}}" ng-attr-height="{{config.blockSize}}" ng-attr-fill="{{config.c2}}" x="-15" y="-15" width="30" height="30" fill="#33B677" transform="scale(1.01968 1.01968)"><animateTransform attributeName="transform" type="scale" calcMode="spline" values="1.5;1" keyTimes="0;1" dur="1s" keySplines="0 0.5 0.5 1" begin="-0.2s" repeatCount="indefinite"></animateTransform></rect></g><g transform="translate(25,75)"><rect ng-attr-x="{{config.dp}}" ng-attr-y="{{config.dp}}" ng-attr-width="{{config.blockSize}}" ng-attr-height="{{config.blockSize}}" ng-attr-fill="{{config.c3}}" x="-15" y="-15" width="30" height="30" fill="#FFC107" transform="scale(1.06458 1.06458)"><animateTransform attributeName="transform" type="scale" calcMode="spline" values="1.5;1" keyTimes="0;1" dur="1s" keySplines="0 0.5 0.5 1" begin="0s" repeatCount="indefinite"></animateTransform></rect></g><g transform="translate(75,75)"><rect ng-attr-x="{{config.dp}}" ng-attr-y="{{config.dp}}" ng-attr-width="{{config.blockSize}}" ng-attr-height="{{config.blockSize}}" ng-attr-fill="{{config.c4}}" x="-15" y="-15" width="30" height="30" fill="#029AE4" transform="scale(1.03905 1.03905)"><animateTransform attributeName="transform" type="scale" calcMode="spline" values="1.5;1" keyTimes="0;1" dur="1s" keySplines="0 0.5 0.5 1" begin="-0.1s" repeatCount="indefinite"></animateTransform></rect></g></svg>
+                <p>Loading...</p>
                 </div>
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input v-model="password" v-bind:disabled="passwordDisabled" type="password" name="password" minlength="8" class="form-control" id="password" placeholder="Password" autocomplete="current-password">
+                <div class="hid-me">
+                <form v-on:submit.prevent="onSubmit" v-bind:action="formUrl" class="form-login" method="POST">
+                    <div v-if="message" v-bind:class="messageClass" role="alert">${message}</div>
+                    <input v-model="redirectTo" type="hidden" name="redirectTo">
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input v-model="email" v-bind:disabled="disabled" type="email" name="email" class="form-control" id="email" placeholder="Enter email" autocomplete="username email">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input v-model="password" v-bind:disabled="disabled" type="password" name="password" minlength="8" class="form-control" id="password" placeholder="Password" autocomplete="current-password">
+                    </div>
+                    <p><a href="/forgot-password.html">Forgot password?</a></p>
+                    <div class="form-group text-center">
+                        <button v-bind:disabled="disabled" type="submit" class="btn btn-lg btn-warning">${btnSubmitValue}</button>
+                    </div>
+                    <p class="text-center">Don't have an account yet? <br><a href="/account/register.html">Create a Free Account</a></p>
+                    <div v-if="!isAuth" class="or-social-logins">
+                        <p class="sep"><span>Or</span></p>
+                        <button v-bind:disabled="disabled" v-on:click="showFbLogin" class="btn-fb">
+                            <svg width="18px" height="18px" viewBox="3 3 18 18"><path fill="#fff" d="M5,3h14c1.104,0,2,0.896,2,2v14c0,1.104-0.896,2-2,2H5c-1.104,0-2-0.896-2-2V5C3,3.896,3.896,3,5,3 M18,5h-2.5C13.566,5,12,6.567,12,8.5V11h-2v3h2v7h3v-7h3v-3h-3V9c0-0.552,0.447-1,1-1h2V5z"/></svg>
+                            <span>Login with facebook</span>
+                        </button>
+                    </div>
+                </form>
                 </div>
-                <p><a href="/forgot-password.html">Forgot password?</a></p>
-                <div class="form-group text-center">
-                    <button v-bind:disabled="btnSubmitDisabled" type="submit" class="btn btn-lg btn-warning">{{btnSubmitValue}}</button>
-                </div>
-                <p class="text-center">Don't have an account yet? <br><a href="/account/register.html">Create a Free Account</a></p>
-
-            </form>
-            {% endraw %}
+            </div>
         </div>
     </div>
 </div>
+{% include "include/footer.html" %}
 {% endblock %}
 {% block scripts %}
-<script src="{{baseUrl}}/js/jquery.min.js"></script>
+{{super()}}
 <script src="{{baseUrl}}/js/vue.min.js"></script>
-<script src="{{baseUrl}}/bootstrap4/js/bootstrap.bundle.min.js"></script>
 <script>
     var form = new Vue({
         el: '#form-login',
+        delimiters: ["${", "}"],
         data: {
             formUrl: "{{baseUrl}}/account/login.json",
             redirectTo: "{{redirectTo}}",
             btnSubmitValue: "Login",
             email:"",
             password:"",
-            emailDisabled: false,
-            passwordDisabled: false,
-            btnSubmitDisabled: false,
+            disabled: null,
             messageClass: "alert",
             message:"",
-            showMessage: false
+            showMessage: false,
+            isAuth: window.isAuth
         },
         methods: {
             onSubmit: function(e){
-                var me = this;
+                var me = this,
+                    btnSubmitValue = this.btnSubmitValue;
                 me.btnSubmitValue = "Logging in..."
-                me.emailDisabled = true;
-                me.passwordDisabled = true;
-                me.btnSubmitDisabled = true;
+                me.disabled = "disabled";
                 jQuery.post(me.formUrl, {
                     redirectTo: me.redirectTo,
                     email: me.email,
                     password: me.password
                 }).then(function(data){
-                    me.showMessage = true;
                     me.messageClass = "alert alert-success";
                     me.message = "Login successful, please wait...";
                     window.location.replace(data.redirectTo);
                 }).fail(function(jqXHR, textStatus, httpError){
                     var error = jqXHR.responseJSON || ["Unknown error"];
-                    me.showMessage = true;
                     me.messageClass = "alert alert-danger";
                     me.message = error.shift();
                 }).always(function(){
-                    me.btnSubmitValue = "Login"
-                    me.emailDisabled = false;
-                    me.passwordDisabled = false;
-                    me.btnSubmitDisabled = false;
+                    me.btnSubmitValue = btnSubmitValue;
+                    me.disabled = null;
+                });
+            },
+            loginProceed: function(response){
+                var me = this;
+                var userID = response.authResponse.userID;
+                var accessToken = response.authResponse.accessToken;
+                jQuery.post('/api/fb-login.json', {
+                    accessToken: accessToken,
+                    userId: userID,
+                }).then(function(result){
+                    console.log('getLoginStatus', result);
+                    me.messageClass = "alert alert-success";
+                    me.message = "Login successful, please wait..."; 
+                    window.location.replace('/account/calendars.html');
+                }).always(function(){
+                    me.disabled = null;
+                }).catch(function(err){
+                    console.log('err', err);
+                });
+            },
+            showFbLogin: function(e){
+                e.preventDefault();
+                var me = this;
+                var FB = _.get(window, 'FB', null);
+                if(!FB){
+                    console.log('FB undefined.');
+                    return false;
+                }
+                me.disabled = "disabled";
+                FB.getLoginStatus(function(response) {
+                    if (response.status === 'connected') {
+                        console.log('You are already logged in on FB.');
+                        me.loginProceed(response);
+                    // } else if (response.status === 'not_authorized') {
+                    } else {
+                        // the user hasnt authorized
+                        // the user isn't logged in to Facebook.
+                        FB.login(function(response){
+                            me.disabled = null;
+                            console.log('FB Modal response', response); 
+                            
+                            if (response.status === 'connected') {
+                                me.loginProceed(response);
+                            } else {
+                                me.messageClass = "alert alert-danger";
+                                me.message = "You did not authorized us to login with FB.";
+                            }
+
+                        }, {
+                            auth_type: 'rerequest'
+                        });
+                    }
+                }, {
+                    auth_type: 'rerequest'
                 });
             }
         }
