@@ -1,5 +1,6 @@
 const path = require('path');
 const util = require('util');
+const unirest = require('unirest');
 const express = require('express');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
@@ -50,7 +51,6 @@ function routerApi(app){
             let calendarData = {};
             if(plan){
                 planData = plan.plan_data;
-                console.log('planData',planData)
                 let momentStartDate = moment.utc(query.date+'T00:00:00.000Z');
                 if(query.anchor=== 'end'){
                     let trainingDays = planData[planData.length-1].trainingDay-1;
@@ -308,6 +308,107 @@ function routerApi(app){
             res.status(400).json(err);
         }
     
+    });
+
+    router.post('/calendar/delete.json', async (req, res, next) => {
+        try {
+        
+            let post = inputGuard.allowedFields(req.body, {
+                uid: {
+                    default: ''
+                },
+            });
+
+            let calendar = await rdb.Calendar.findOne({
+                where: {
+                    uid: post.uid
+                }
+            });
+
+            if(!calendar) {
+                throw new Error('Calendar not found');
+            }
+
+            let result = await rdb.sequelize.transaction( async (t)=> {
+                await rdb.CalendarData.destroy({transaction: t, where: { calendarId: calendar.id}});
+                await rdb.Calendar.destroy({transaction: t, where: { id: calendar.id}});
+                await rdb.CalendarUser.destroy({transaction: t, where: { calendarId: calendar.id}});
+                res.json({redirect:'/account/calendars.html'});
+            });
+        } catch (err){
+            next(err);
+        }
+    });
+
+    router.post('/fb-login.json', async (req, res, next) => {
+        try {
+            let post = inputGuard.allowedFields(req.body, {
+                accessToken: {
+                    default: ''
+                },
+                userId: {
+                    default: ''
+                }
+            });
+
+            let fbAppId = '982218988600046';
+            let fbAppSecret = '83451ca71869f3e3c33b3dcfb8f13e75';
+            let url = 'https://graph.facebook.com/debug_token?input_token=%s&access_token=%s|%s'
+
+            let endPoint = util.format(url, 
+                post.accessToken, 
+                fbAppId,
+                fbAppSecret
+            );
+            unirest.get(endPoint)
+                .end(async (response) => {
+                    let package = JSON.parse(response.body);
+                    let appId = lodash.get(package, 'data.app_id');
+                    let userId = lodash.get(package, 'data.user_id');
+                    let error = lodash.get(package, 'data.error', null);
+                    if(error!==null){
+                        console.log(error);
+                        return res.status(400).json(app.get('fromErrToArray')(new Error(error.message)));
+                    }
+                    if(appId !== fbAppId) {
+                        console.log(error);
+                        return res.status(400).json(app.get('fromErrToArray')(new Error('App ID dont match.')));
+                    }
+                    console.log(package);
+                    let user = await rdb.User.findOne({
+                        where: {
+                            fbUserId: userId
+                        }
+                    });
+                    if(user){
+                        await user.update({
+                            fbAccessToken: post.accessToken
+                        });
+                    } else {
+                        let endPoint = util.format('https://graph.facebook.com/me?fields=id,name,email&access_token=%s', 
+                            post.accessToken, 
+                        );
+                        // unirest.get(endPoint)
+                        //     .end(async (response) => {
+                                
+                        //     });
+
+                        user = await rdb.User.create({
+                            fbUserId: userId,
+                            fbAccessToken: post.accessToken
+                        })
+                    }
+
+                    req.session.isAuth = true;
+                    req.session.authUser = user.get({ plain: true });
+                    res.json(req.session.authUser);
+                });
+            
+        } catch (err){
+            console.log(err);
+            err = app.get('fromErrToArray')(err);
+            res.status(400).json(err);
+        }
     });
     return router;
 }
