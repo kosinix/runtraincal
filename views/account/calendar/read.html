@@ -1,99 +1,479 @@
 {% extends "body.html" %}
 
 {% block main %}
-<div class="container main">
-    <div class="row action-bar">
-        <div class="col col-xs-4 action-today">
-            <div class="btn-group" role="group" aria-label="pagination">
-                <a class="btn btn-light" href="{{baseUrl}}/account/calendar/read.html?uid={{uid}}&year={{ monthView.prevMonthYear }}&month={{ monthView.prevMonthNumber }} " aria-label="Left Align">
-                    <svg fill="#000000" width="26" height="26" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
-                        <path d="M0 0h24v24H0z" fill="none"/>
-                    </svg>
-                </a>
-                <a href="{{baseUrl}}/account/calendar/read.html?uid={{uid}}&year={{now.format('YYYY')}}&month={{now.format('MM')}}" class="btn btn-light" aria-label="Today">
-                    <span>Today</span>
-                </a>
-                <a class="btn btn-light" href="{{baseUrl}}/account/calendar/read.html?uid={{uid}}&year={{ monthView.nextMonthYear }}&month={{ monthView.nextMonthNumber }} ">
-                    <svg fill="#000000" width="26" height="26" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
-                        <path d="M0 0h24v24H0z" fill="none"/>
-                    </svg>
-                </a>
+<div id="calendar-editor" class="container main">
+    <div class="cloaker" v-cloak>
+        <div class="loading">
+        <svg width="45px"  height="45px"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="lds-cube" style="background: none;"><g transform="translate(25,25)"><rect ng-attr-x="{{config.dp}}" ng-attr-y="{{config.dp}}" ng-attr-width="{{config.blockSize}}" ng-attr-height="{{config.blockSize}}" ng-attr-fill="{{config.c1}}" x="-15" y="-15" width="30" height="30" fill="#029AE4" transform="scale(1.00725 1.00725)"><animateTransform attributeName="transform" type="scale" calcMode="spline" values="1.5;1" keyTimes="0;1" dur="1s" keySplines="0 0.5 0.5 1" begin="-0.3s" repeatCount="indefinite"></animateTransform></rect></g><g transform="translate(75,25)"><rect ng-attr-x="{{config.dp}}" ng-attr-y="{{config.dp}}" ng-attr-width="{{config.blockSize}}" ng-attr-height="{{config.blockSize}}" ng-attr-fill="{{config.c2}}" x="-15" y="-15" width="30" height="30" fill="#33B677" transform="scale(1.01968 1.01968)"><animateTransform attributeName="transform" type="scale" calcMode="spline" values="1.5;1" keyTimes="0;1" dur="1s" keySplines="0 0.5 0.5 1" begin="-0.2s" repeatCount="indefinite"></animateTransform></rect></g><g transform="translate(25,75)"><rect ng-attr-x="{{config.dp}}" ng-attr-y="{{config.dp}}" ng-attr-width="{{config.blockSize}}" ng-attr-height="{{config.blockSize}}" ng-attr-fill="{{config.c3}}" x="-15" y="-15" width="30" height="30" fill="#FFC107" transform="scale(1.06458 1.06458)"><animateTransform attributeName="transform" type="scale" calcMode="spline" values="1.5;1" keyTimes="0;1" dur="1s" keySplines="0 0.5 0.5 1" begin="0s" repeatCount="indefinite"></animateTransform></rect></g><g transform="translate(75,75)"><rect ng-attr-x="{{config.dp}}" ng-attr-y="{{config.dp}}" ng-attr-width="{{config.blockSize}}" ng-attr-height="{{config.blockSize}}" ng-attr-fill="{{config.c4}}" x="-15" y="-15" width="30" height="30" fill="#029AE4" transform="scale(1.03905 1.03905)"><animateTransform attributeName="transform" type="scale" calcMode="spline" values="1.5;1" keyTimes="0;1" dur="1s" keySplines="0 0.5 0.5 1" begin="-0.1s" repeatCount="indefinite"></animateTransform></rect></g></svg>
+        <p>Loading...</p>
+        </div>
+        <div class="hid-me">
+            <div v-if="calendarData" class="row-calendar">
+                <div class="action-bar" v-cloak>
+                    <div class="action-nav">
+                        <div class="btn-group" role="group" aria-label="pagination">
+                            <button v-on:click="prevMonth" class="btn btn-light" aria-label="Last Month">
+                                <svg fill="#000000" width="26" height="26" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                                    <path d="M0 0h24v24H0z" fill="none"/>
+                                </svg>
+                            </button>
+                            <button v-on:click="today" class="btn btn-light" aria-label="Today">
+                                <span>Today</span>
+                            </button>
+                            <button v-on:click="nextMonth" class="btn btn-light" aria-label="Next Month">
+                                <svg fill="#000000" width="26" height="26" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+                                    <path d="M0 0h24v24H0z" fill="none"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="action-year">
+                        <h1>${ monthName } ${ year }</h1>
+                    </div>
+                    <div class="action-page">
+                        <!--<button v-on:click="onConfig" class="btn btn-light">
+                            <svg fill="#000000" width="26" height="26" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M0 0h24v24H0z" fill="none"/>
+                                <path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/>
+                            </svg>
+                        </button>-->
+                    </div>
+                </div>
+                <div class="table-port">
+                <table id="table" class="table calendar" v-cloak>
+                    <thead>
+                        <tr>
+                            <th v-for="(weekDay, index) in weekDays">${weekDay}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(row, y) in matrix">
+                            <td v-for="(col, x) in row" v-on:click="onDate(col)" v-bind:class="col.type">
+                                <div class="date">
+                                    <div class="day">
+                                        ${col.day}
+                                    </div>
+                                    <div v-for="(info, index) in col.info" class="event" v-bind:data-type="info.workoutType">${info.title}</div>
+                                </div><!-- .date -->
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                </div>
+                <h2 v-if="calendarName">${calendarName}</h2>
+                <div class="save-bar">
+                <button v-on:click="saveCalendar" v-bind:disabled="disabled" class="btn btn-warning">Save Calendar</button>
+                <button v-on:click="deleteCalendar" v-bind:disabled="disabled" class="btn btn-danger">Delete Calendar</button>
+                </div>
+                <div v-bind:data-show="showDayView" class="day-view">
+                <div class="action-bar">
+                    <div class="action-nav">
+                        <div class="btn-group" role="group" aria-label="pagination">
+                            <button v-on:click="yesterday" class="btn btn-light" aria-label="Yesterday">
+                                <svg fill="#000000" width="26" height="26" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                                    <path d="M0 0h24v24H0z" fill="none"/>
+                                </svg>
+                            </button>
+                            <button v-on:click="today" class="btn btn-light" aria-label="Today">
+                                <span>Today</span>
+                            </button>
+                            <button v-on:click="tomorrow" class="btn btn-light" aria-label="Tomorrow">
+                                <svg fill="#000000" width="26" height="26" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+                                    <path d="M0 0h24v24H0z" fill="none"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="action-year">
+                        <h1>${ monthName } ${ selectedDay }, ${ year } - ${ weekDayName }</h1>
+                    </div>
+                    <div class="action-page">
+                        <button v-on:click="hideDayView" class="btn btn-light">
+                            <svg style="width:26px;height:26px" viewBox="0 0 24 24"><path fill="#000000" d="M13.46,12L19,17.54V19H17.54L12,13.46L6.46,19H5V17.54L10.54,12L5,6.46V5H6.46L12,10.54L17.54,5H19V6.46L13.46,12Z" /></svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="workout-buttons">
+                    <button v-on:click="modalWorkout" class="btn btn-sm btn-primary">Add Workout</button>
+                </div>
+                <ul class="event">
+                    <li v-for="(infos, group) in dayInfo">
+                    <h6>${group}</h6>
+                    <ul>
+                        <li v-for="info in infos">
+                        <p>${info.title}</p>
+                        <pre>${info.description}</pre>
+                        <button v-on:click="onDeleteDayInfo(info.date, info.index)" class="btn btn-sm btn-warning">Delete</button>
+                        </li>
+                    </ul>
+                    </li>
+                    <li v-if="!hasDayInfo()">No workouts for this day.</li>
+                </ul>
+                </div>
             </div>
         </div>
-        <div class="col col-xs-4 action-year">
-            <h1><a href="#">{{ monthView.name }} {{ monthView.year }}</a></h1>
-        </div>
-        <div class="col col-xs-4 action-page">
-            <button id="btn-modal-config" class="btn btn-light" data-toggle="modal" data-target="#modal-config">
-                <svg fill="#000000" width="26" height="26" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M0 0h24v24H0z" fill="none"/>
-                    <path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/>
-                </svg>
-            </button>
-        </div>
     </div>
-    <div class="row">
-        <div class="col-md-12">
-        <h1>{{calendar.title}}</h1>
-            <table class="table calendar">
-                <thead>
-                    <tr>
-                        {% for weekDay in monthView.weekDays %}
-                            <th>{{weekDay}}</th>
-                        {% endfor %}
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for week in monthView.matrix %}
-                    <tr>
-                        {% for date in week %}
-                            {% set class = date.type %}
-                            {% if date.isToday %}
-                                {% set class = class + ' now' %}
-                            {% endif %}
-                            <td class="{{class}}">
-                                <div class="date container">
-                                    <div class="row day">
-                                        <div class="col-12 col-md-6">
-                                            <a class="" href="{{baseUrl}}/account/day/read.html?uid={{uid}}&year={{date.year}}&month={{date.month}}&day={{date.day}}">{{date.day}}</a>
-                                        </div>
-                                        <div class="col-12 col-md-6 text-right">
-                                            <a href="{{baseUrl}}/account/event/create.html?uid={{uid}}&year={{date.year}}&month={{date.month}}&day={{date.day}}" title="Add">+</a>
-                                        </div>
-                                    </div>
-                                    {% for info in date.info %}
-                                        {% if info.title %}
-                                            <div class="event">
-                                                {{info.title}}
-                                            </div>
-                                        {% endif %}
-                                    {% endfor %}
-                                    
-                                </div>
-                            </td>
-                        {% endfor %}
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+</div>
+<div class="modal fade" id="modal-workout" tabindex="-1" role="dialog" aria-labelledby="Add Workout" aria-hidden="true">
+  <form v-on:submit="onSubmit" method="POST">
+    <div class="modal-dialog modal-login" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title align-center" id="exampleModalLabel">Add Workout</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
         </div>
+        <div class="modal-body">
+          <form id="form-login" class="form-login" method="POST">
+            <div v-if="message" v-bind:class="messageClass" role="alert">${message}</div>
+            <input type="hidden" name="redirectTo">
+            <div class="form-group">
+                <label for="title">Title</label>
+                <input v-model="title" type="text" name="title" class="form-control" id="title" placeholder="Title">
+            </div>
+            <div class="form-group">
+                <label for="description">Description (Separate by newline)</label>
+                <textarea v-bind:disabled="disabled" v-model="description" class="form-control" name="description" id="description" rows="4"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="type">Type</label>
+                <select v-bind:disabled="disabled" v-model="type" name="type" id="" class="form-control">
+                  <option value="run">Run</option>
+                  <option value="weight">Weight</option>
+                  <option value="bike">Bike</option>
+                  <option value="swim">Swim</option>
+                  <option value="ski">Ski</option>
+                  <option value="rest">Rest</option>
+                  <option value="others">Others</option>
+                </select>
+            </div>
+            <div class="form-group text-center">
+                <button v-bind:disabled="disabled" type="submit" class="btn btn-lg btn-warning">Create Workout</button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
-    <div class="row action-bar">
-        <div class="col col-xs-4 action-delete">
-            
-        </div>
-        <div class="col col-xs-4 action-year">
-        </div>
-        <div class="col col-xs-4 action-page">
-            <form action="{{baseUrl}}/account/calendar/delete" method="POST">
-                <input type="hidden" name="uid" value="{{uid}}">
-                <button type="submit" class="btn btn-danger" aria-label="Delete">Delete</button>
-            </form> 
-        </div>
-    </div>
-    {% include 'include/modal-config.html' %}
-
+  </form>
 </div>
 {% endblock %}
+{% block scripts %}
+{{super()}}
+<script src="{{baseUrl}}/js/moment.min.js"></script>
+<script src="{{baseUrl}}/js/vue.js"></script>
+<script src="{{baseUrl}}/js/helper.js"></script>
+<script>
+var calendar = {{calendar | safe }};
+var calendarData = {{calendarData | safe }};
+    
+var momentNow = moment.utc().add(helper.getMyTimeZone(), 'hours');
+var vCalendarEditor = new Vue({
+  el: "#calendar-editor",
+  delimiters: ["${", "}"],
+  data: {
+    calendarName: calendar.title,
+    calendarDate: calendar.date,
+    calendarUid: calendar.uid,
+    calendarId: calendar.id,
+    anchor: calendar.dateAnchorPoint,
+    planId: calendar.planId,
+    calendarData: calendarData, 
+    disabled: null,
+    showDayView: false,
+    year: parseInt(momentNow.format('YYYY')),
+    month: parseInt(momentNow.format('M')),
+    day: parseInt(momentNow.format('D')),
+    timeZone: helper.getMyTimeZone(),
+    weekStart: 0,
+  },
+  mounted: function(){
+    var me = this;
+    
+    this.calendarDate = moment().format('YYYY-MM-DD');
+
+  },
+  computed: {
+    
+    selectedDay: function(){
+      var momentCurrent = this.getCurrentMoment();
+      return momentCurrent.format('DD');
+    },
+    weekDayName: function(){
+      var momentCurrent = this.getCurrentMoment();
+      return momentCurrent.format('dddd');
+    },
+    monthName: function(){
+      var momentCurrent = this.getCurrentMoment();
+      return momentCurrent.format('MMMM');
+    },
+    weekDays: function(){
+      var names = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      return lodash.concat(lodash.slice(names, this.weekStart), lodash.slice(names, 0, this.weekStart));
+    },
+    matrix: function(){
+      var me = this;
+      var momentCurrent = moment.utc(helper.isoDate(this.year, this.month, 1)); // Day dont matter 
+      var momentPrevMonth = momentCurrent.clone().subtract(1, 'months');
+      var momentNextMonth = momentCurrent.clone().add(1, 'months');
+      var weekDayFirst = parseInt(momentCurrent.clone().startOf('month').format('d')); // First day of week. Zero-based. 0-6
+      var weekDayLast = parseInt(momentCurrent.clone().endOf('month').format('d')); // This months last day of week. Zero-based. 0-6
+      
+      // Prefix length formula
+      var prefixLength = weekDayFirst - this.weekStart;
+      if(prefixLength < 0){
+        prefixLength += 7;
+      }
+      var prefix = helper.generateDays(momentPrevMonth.daysInMonth()); // Get previous month's total number of days and place it in an array
+      prefix = lodash.takeRight(prefix, prefixLength); // Cut the parts we need
+      prefix = lodash.map(prefix, function(day){
+        return {
+          type: 'prefix',
+          year: parseInt(momentPrevMonth.format('YYYY')),
+          month: parseInt(momentPrevMonth.format('M')),
+          day: day
+        }
+      });
+      // Generate current days as array
+      var days = helper.generateDays(momentCurrent.daysInMonth());
+      days = lodash.map(days, function(day){
+        return {
+          type: 'day',
+          year: parseInt(momentCurrent.format('YYYY')),
+          month: parseInt(momentCurrent.format('M')),
+          day: day
+        }
+      });
+
+      // Suffix length formula
+      const weekDays = 6; // 0-6 (7) days in a week
+      var suffixLength = weekDays - (weekDayLast - this.weekStart);
+      if(suffixLength > 6){
+        suffixLength = suffixLength - weekDays - 1;
+      }
+      var suffix = helper.generateDays(suffixLength);
+      suffix = lodash.map(suffix, function(day){
+        return {
+          type: 'suffix',
+          year: parseInt(momentNextMonth.format('YYYY')),
+          month: parseInt(momentNextMonth.format('M')),
+          day: day
+        }
+      });
+
+      // Prepend prefix and append suffix to matrix
+      var monthDaysArray = lodash.concat(prefix, days, suffix); 
+
+      // Add calendar data and NOW
+      if(me.calendarData!==null){
+        monthDaysArray = lodash.map(monthDaysArray, function(el){
+          var isoDate = helper.isoDate(el.year, el.month, el.day);
+          var index = isoDate.split('T')[0];
+          el.info = lodash.get(me.calendarData, index, [])
+          var now1 = moment.utc(isoDate).add(me.timeZone, 'hours');
+          var now2 = moment.utc().add(me.timeZone, 'hours');
+          if (now1.format("YYYY-MM-DD") === now2.format("YYYY-MM-DD")){
+            el.type +=' now';
+          }
+          return el;
+        });
+      }
+      monthDaysArray = lodash.chunk(monthDaysArray, 7); 
+      return monthDaysArray;
+    },
+    dayInfo: function(){
+      var me = this;
+      var isoDate = helper.isoDate(this.year, this.month, this.day);
+      var index = isoDate.split('T')[0];
+      var infos = lodash.get(me.calendarData, index, []);
+      infos = lodash.map(infos, function(info, index){
+        info.index = index;
+        return info;
+      });
+      infos = lodash.groupBy(infos, function(info){
+        return info.workoutType;
+      })
+      return infos;
+    },
+  },
+  
+  
+  methods: {
+    hasDayInfo: function(){
+      return (Object.keys(this.dayInfo).length > 0);
+    },
+    onDeleteDayInfo: function (date, index){
+      // console.log(date, index)
+      this.calendarData[date].splice(index, 1);
+    },
+    
+    onConfig: function(){
+      jQuery('html, body').animate({
+          scrollTop: 0
+      }, 600);
+    },
+    onDate: function(dayObject){
+      this.showDayView = true;
+      this.year = dayObject.year;
+      this.month = dayObject.month;
+      this.day = dayObject.day;
+    },
+    getCurrentMoment: function(){
+      var momentCurrent = moment.utc(helper.isoDate(this.year, this.month, this.day));
+      return momentCurrent.add(this.timeZone, 'hours').clone();
+    },
+    yesterday: function(e){
+      e.preventDefault();
+      var momentCurrent = this.getCurrentMoment();
+      momentCurrent.subtract(1, 'days');
+      this.year = parseInt(momentCurrent.format('YYYY'));
+      this.month = parseInt(momentCurrent.format('M'));
+      this.day = parseInt(momentCurrent.format('D'));
+    },
+    today: function(e){
+      momentNow = moment.utc().add(this.timeZone, 'hours');
+      this.year = parseInt(momentNow.format('YYYY'));
+      this.month = parseInt(momentNow.format('M'));
+      this.day = parseInt(momentNow.format('D'));
+    },
+    tomorrow: function(e){
+      e.preventDefault();
+      var momentCurrent = this.getCurrentMoment();
+      momentCurrent.add(1, 'days');
+      this.year = parseInt(momentCurrent.format('YYYY'));
+      this.month = parseInt(momentCurrent.format('M'));
+      this.day = parseInt(momentCurrent.format('D'));
+    },
+    hideDayView: function(){
+      this.showDayView = false;
+    },
+    
+    prevMonth: function(e){
+      e.preventDefault();
+      var momentCurrent = moment.utc(helper.isoDate(this.year, this.month, this.day));
+      momentCurrent.subtract(1, 'months');
+      this.year = parseInt(momentCurrent.format('YYYY'));
+      this.month = parseInt(momentCurrent.format('M'));
+      this.day = parseInt(momentCurrent.format('D'));
+    },
+    nextMonth: function(e){
+      e.preventDefault();
+      var momentCurrent = moment.utc(helper.isoDate(this.year, this.month, this.day));
+      momentCurrent.add(1, 'months');
+      this.year = parseInt(momentCurrent.format('YYYY'));
+      this.month = parseInt(momentCurrent.format('M'));
+      this.day = parseInt(momentCurrent.format('D'));
+    },
+    modalWorkout: function(){
+      jQuery('#modal-workout').modal();
+      vModalWorkout.message = "";
+      vModalWorkout.title = "";
+      vModalWorkout.description = "";
+      
+    },
+    saveCalendar: function(){
+      var me = this;
+      this.disabled = "disabled";
+      var url = '/api/calendar/create.json';
+      if(me.calendarId!==null){
+        url = '/api/calendar/update.json';
+      }
+      jQuery.post(url, {
+        calendarId: me.calendarId,
+        title: me.calendarName,
+        dateAnchorPoint: me.anchor,
+        month: me.month,
+        day: me.day,
+        year: me.year,
+        calendarDataCollection: JSON.stringify(me.calendarData),
+      }).then(function(result){
+        console.log(result);
+        me.calendarId = lodash.get(result, 'calendarId', null);
+        
+      }).always(function(){
+        me.disabled = null;
+      }).catch(function(err){
+        var error = err.responseJSON || ["Unknown error"];
+        error = error.shift();
+        if(error==='Unauthenticated'){
+          jQuery('#modal-login').modal();
+        }
+      });
+
+    },
+    deleteCalendar: function(){
+      var me = this;
+      this.disabled = "disabled";
+      var url = '/api/calendar/delete.json';
+      
+      jQuery.post(url, {
+        uid: me.calendarUid,
+      }).then(function(result){
+        console.log(result);
+        var redirect = lodash.get(result, 'redirect', '/account/calendars.html');
+        window.location.replace(redirect);
+      }).always(function(){
+        me.disabled = null;
+      }).catch(function(err){
+        var error = err.responseJSON || ["Unknown error"];
+        error = error.shift();
+        alert(error);
+      });
+    }
+  }
+});
+
+var vModalWorkout = new Vue({
+  el: "#modal-workout",
+  delimiters: ["${", "}"],
+  data: {
+    title: '',
+    description: '',
+    type: 'run',
+    messageClass: "alert",
+    message:"",
+  },
+  computed: {
+    disabled: function(){
+      if(lodash.trim(this.title) === ""){
+        return "disabled"
+      }
+      return null;
+    }
+  },
+  methods: {
+    onSubmit: function(e){
+      e.preventDefault();
+      if(lodash.trim(this.title) === ""){
+        this.messageClass = "alert alert-danger";
+        this.message = "Please provide a Title."
+        return false;
+      }
+      var isoDate = helper.isoDate(vCalendarEditor.year, vCalendarEditor.month, vCalendarEditor.day);
+      var index = isoDate.split('T')[0];
+      var data = {
+        calendarId: vCalendarEditor.calendarId,
+        date: index,
+        title: this.title,
+        description: this.description,
+        workoutType: this.type
+      };
+      if(lodash.get(vCalendarEditor.calendarData, index, null)===null){
+        Vue.set(vCalendarEditor.calendarData, index, []);
+      }
+
+      vCalendarEditor.calendarData[index].push(data);
+      this.messageClass = "alert alert-success";
+      this.message = "Workout added";
+      this.title = "";
+      this.description = "";
+    }
+  }
+});
+</script>
+{% endblock %}
+
