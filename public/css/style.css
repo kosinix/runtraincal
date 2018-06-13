@@ -10,7 +10,7 @@ body {
     font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
 }
 body > .container  {
-    padding-top: 80px;
+    padding-top: 120px;
     padding-bottom: 100px;
 }
 body.home .container {
@@ -172,7 +172,7 @@ input[type=number] {
 
 /* Vue */
 [v-cloak]{
-    display: none;
+    /* display: none; */
 }
 form[v-cloak],
 .form-login[v-cloak],
@@ -250,7 +250,50 @@ form[v-cloak]::before,
         padding: 0;
     }
 }
+.or-social-logins {
+    text-align: center;
+}
+.or-social-logins .sep {
+    position: relative;
+}
+.or-social-logins .sep span {
+    background: #fff;
+    display: inline-block;
+    z-index: 2;
+    position:  relative;
+    padding: 0 10px;
+}
+.or-social-logins .sep:before {
+    content:"";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    
+    background: #ccc;
+    height: 1px;
+    width: 100%;
+}
 
+a.btn-fb,
+.btn-fb {
+    display: inline-block;
+    padding: 4px 8px 6px 32px;
+    background: #4267b2;
+    color: #fff;
+    text-decoration:  none;
+    border-radius: 3px;
+    position:  relative;
+    border: 0;
+}
+.btn-fb svg {
+    position: absolute;
+    left: 7px;
+    top: 50%;
+    transform: translate(0, -50%);
+}
+.btn-fb:disabled {
+    opacity: 0.6;
+}
 /* Home */
 .card-columns {
     display: flex;

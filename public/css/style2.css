@@ -9,7 +9,7 @@
 body {
     font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
 }
-body > .container  {
+body.home > .container  {
     padding-top: 80px;
     padding-bottom: 100px;
 }
@@ -23,12 +23,13 @@ img {
 }
 
 /* Body */
-body {
-    background: url("/images/men-trail.jpg") no-repeat center;
+body.home {
+    background: #333 url("/images/men-trail.jpg") no-repeat center;
     background-attachment: fixed;
     background-size: cover;
     min-height: 1000px;
     position: relative;
+    padding-bottom: 30px;
 }
 
 /* Top */
@@ -38,12 +39,14 @@ body {
     top: 0;
     left: 0;
     z-index: 3;
+    width: 100%;
 }
 .row-top > * {
     margin: 10px 10px 0 0;
 }
 
 /* Home */
+.cloaker,
 .calendar-view {
     position: relative;
 }
@@ -264,10 +267,97 @@ body .shake {
 }
 
 /* Vue */
-[v-cloak]{
+.cloaker[v-cloak] .hid-me{
     display: none;
 }
-[v-cloak]>div{
+.cloaker .loading{
+    min-height: 100px;
+    text-align: center;
+    display: none;
+    font-size: 14px;
+    padding: 50px 0;
+}
+.home .cloaker .loading {
+    color: #ddd;
+}
+.cloaker[v-cloak] .loading{
+    display: block;
+}
+
+.or-social-logins {
+    text-align: center;
+}
+.or-social-logins .sep {
+    position: relative;
+}
+.or-social-logins .sep span {
+    background: #fff;
+    display: inline-block;
+    z-index: 2;
+    position:  relative;
+    padding: 0 10px;
+}
+.or-social-logins .sep:before {
+    content:"";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    
+    background: #ccc;
+    height: 1px;
+    width: 100%;
+}
+
+a.btn-fb,
+.btn-fb {
+    display: inline-block;
+    padding: 4px 8px 6px 32px;
+    background: #4267b2;
+    color: #fff;
+    text-decoration:  none;
+    border-radius: 3px;
+    position:  relative;
+    border: 0;
+}
+.btn-fb svg {
+    position: absolute;
+    left: 7px;
+    top: 50%;
+    transform: translate(0, -50%);
+}
+.btn-fb:disabled {
+    opacity: 0.6;
+}
+
+a.hire-me-please {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    color: #fff;
+    background: #ffc107;
+    padding: 2px 9px 2px 9px;
+    font-size: 14px;
+    font-weight:  bold;
+    text-decoration: none;
+    letter-spacing:  2px;
+    text-shadow:  none;
+    opacity: 0.6;
+    transition: all 400ms ease-out;
+}
+.hire-me-please:hover {
+    opacity: 1;
+}
+.btn-account {
+    float: right;
+    background:  #444;
+    border-radius:  100%;
+    width: 24px;
+    height: 24px;
+    text-align:  center;
+    padding-top: 1px;
+    margin: 10px 0 10px 0;
+}
+/*[v-cloak]>div{
     position: relative;
     display: block;
     min-height: 100px;
@@ -282,7 +372,7 @@ body .shake {
     display: block;
     background: #fff url('/images/ajax-loader.gif') no-repeat center;
     z-index: 1;
-}
+}*/
 
 /* Table */
 .calendar {
@@ -359,6 +449,7 @@ td.suffix a {
 .action-bar {
     display: flex;
     flex-wrap:  wrap;
+    padding: 0;
 }
 .action-bar > div {
     width: 33%;
