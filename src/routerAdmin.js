@@ -152,13 +152,12 @@ function routerAdmin(app){
                         
                         return {
                             date: date,
-                            workoutType: element.workoutType,
+                            workoutType: element.workoutTypeUid,
                             title: element.title,
                             description: element.description,
                         }
                     });
 
-                    
                     for(let index=0; index < timeIsGoldMine.length; index++){
                         var element = timeIsGoldMine[index];
                         await rdb.CalendarData.create({
@@ -190,12 +189,6 @@ function routerAdmin(app){
                 uid: {
                     default: ''
                 },
-                year: {
-                    default: moment.utc().format('YYYY')
-                },
-                month: {
-                    default: moment.utc().format('MM')
-                },
             });
 
             var calendar = await rdb.Calendar.findOne({
@@ -215,57 +208,13 @@ function routerAdmin(app){
                 raw:true
             });
 
-            var plans = await rdb.Plan.findAll();
-            var trainingPlan = await rdb.Plan.findOne({
-                where: {
-                    id: calendar.planId
-                }
+            calendarData = lodash.groupBy(calendarData, function(o){
+              return o.date;
             });
 
-            var monthView = new kalendaryo.MonthView(query.year, query.month, {
-                padMode: 1,
-                timeZone: timeZone
-            });
-
-            var attachCalendarData = (monthView, calendarData)=> {
-                var fnMapMonth = (row)=>{
-                    row = row.map((dayObject)=>{
-                        var items = lodash.filter(calendarData, (el)=>{
-                            return el.date === dayObject.iso.split('T')[0];
-                        });
-
-                        dayObject.cssClass = dayObject.type;
-
-                        if(monthView.nowDate === dayObject.iso.split('T')[0]){
-                            dayObject.cssClass += ' now';
-                        }
-                        dayObject.info = [];
-
-                        lodash.forEach(items, (gold, key)=>{
-                            dayObject.info.push({
-                                title: gold.title,
-                                description: gold.description,
-                            });
-                        });
-                        return dayObject;
-                    });
-                    return row;
-                };
-
-                monthView.matrix = monthView.matrix.map(fnMapMonth);
-
-                return monthView;
-            };
-
-            calendar.date = moment.utc(calendar.date+'T00:00:00.000Z');
             res.render('account/calendar/read.html', {
-                calendar: calendar,
-                plans: plans,
-                monthView: attachCalendarData(monthView, calendarData),
-                uid: query.uid,
-                months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-                now: getDateTimeNow(),
-                trainingPlan: trainingPlan
+                calendar: JSON.stringify(calendar),
+                calendarData: JSON.stringify(calendarData),
             });
 
         } catch (err) {
@@ -364,35 +313,35 @@ function routerAdmin(app){
     
     });
 
-    router.post('/calendar/delete', async (req, res, next) => {
-        try {
+    // router.post('/calendar/delete', async (req, res, next) => {
+    //     try {
         
-            let post = inputGuard.allowedFields(req.body, {
-                uid: {
-                    default: ''
-                },
-            });
+    //         let post = inputGuard.allowedFields(req.body, {
+    //             uid: {
+    //                 default: ''
+    //             },
+    //         });
 
-            let calendar = await rdb.Calendar.findOne({
-                where: {
-                    uid: post.uid
-                }
-            });
+    //         let calendar = await rdb.Calendar.findOne({
+    //             where: {
+    //                 uid: post.uid
+    //             }
+    //         });
 
-            if(!calendar) {
-                throw new Error('Calendar not found');
-            }
+    //         if(!calendar) {
+    //             throw new Error('Calendar not found');
+    //         }
 
-            let result = await rdb.sequelize.transaction( async (t)=> {
-                await rdb.CalendarData.destroy({transaction: t, where: { calendarId: calendar.id}});
-                await rdb.Calendar.destroy({transaction: t, where: { id: calendar.id}});
-                await rdb.CalendarUser.destroy({transaction: t, where: { calendarId: calendar.id}});
-                res.redirect('/account/calendars.html');
-            });
-        } catch (err){
-            next(err);
-        }
-    });
+    //         let result = await rdb.sequelize.transaction( async (t)=> {
+    //             await rdb.CalendarData.destroy({transaction: t, where: { calendarId: calendar.id}});
+    //             await rdb.Calendar.destroy({transaction: t, where: { id: calendar.id}});
+    //             await rdb.CalendarUser.destroy({transaction: t, where: { calendarId: calendar.id}});
+    //             res.redirect('/account/calendars.html');
+    //         });
+    //     } catch (err){
+    //         next(err);
+    //     }
+    // });
 
     router.get('/day/read.html', async(req, res, next) => {
         try{
