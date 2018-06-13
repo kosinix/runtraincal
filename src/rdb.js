@@ -59,6 +59,12 @@ const User = sequelize.define('user', {
     active: {
         type: Sequelize.INTEGER
     },
+    fbUserId: {
+        type: Sequelize.STRING
+    },
+    fbAccessToken: {
+        type: Sequelize.STRING
+    },
 });
 
 // Calendar
